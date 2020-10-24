@@ -1,10 +1,5 @@
-﻿Imports System.Configuration
-Imports System.DirectoryServices.ActiveDirectory
-Imports System.IO
-Imports System.Security.Cryptography.X509Certificates
+﻿Imports System.IO
 Imports MySql.Data.MySqlClient
-Imports Ubiety.Dns.Core.Records
-
 Public Class SQLClass
     Private MySQLString As String = ""
     Public Sub New()

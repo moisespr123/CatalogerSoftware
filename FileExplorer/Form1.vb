@@ -1,6 +1,5 @@
 ﻿Imports System.IO
 Imports System.Security.Cryptography
-Imports Org.BouncyCastle.Utilities
 
 Public Class Form1
     Private SQL As New SQLClass()
