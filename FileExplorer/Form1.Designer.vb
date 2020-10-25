@@ -46,6 +46,7 @@ Partial Class Form1
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.ToolStripProgressBar1 = New System.Windows.Forms.ToolStripProgressBar()
         Me.StatusToolStripLabel = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.CopyVolumeLabelToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
@@ -166,14 +167,14 @@ Partial Class Form1
         '
         'ContextMenuStrip2
         '
-        Me.ContextMenuStrip2.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DeleteToolStripMenuItem1})
+        Me.ContextMenuStrip2.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DeleteToolStripMenuItem1, Me.CopyVolumeLabelToolStripMenuItem})
         Me.ContextMenuStrip2.Name = "ContextMenuStrip2"
-        Me.ContextMenuStrip2.Size = New System.Drawing.Size(108, 26)
+        Me.ContextMenuStrip2.Size = New System.Drawing.Size(181, 70)
         '
         'DeleteToolStripMenuItem1
         '
         Me.DeleteToolStripMenuItem1.Name = "DeleteToolStripMenuItem1"
-        Me.DeleteToolStripMenuItem1.Size = New System.Drawing.Size(107, 22)
+        Me.DeleteToolStripMenuItem1.Size = New System.Drawing.Size(180, 22)
         Me.DeleteToolStripMenuItem1.Text = "Delete"
         '
         'MenuStrip1
@@ -218,6 +219,12 @@ Partial Class Form1
         Me.StatusToolStripLabel.Name = "StatusToolStripLabel"
         Me.StatusToolStripLabel.Size = New System.Drawing.Size(43, 19)
         Me.StatusToolStripLabel.Text = "Ready"
+        '
+        'CopyVolumeLabelToolStripMenuItem
+        '
+        Me.CopyVolumeLabelToolStripMenuItem.Name = "CopyVolumeLabelToolStripMenuItem"
+        Me.CopyVolumeLabelToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.CopyVolumeLabelToolStripMenuItem.Text = "Copy Volume Label"
         '
         'Form1
         '
@@ -268,4 +275,5 @@ Partial Class Form1
     Friend WithEvents RenameToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents StatusToolStripLabel As ToolStripStatusLabel
     Friend WithEvents ToolStripProgressBar1 As ToolStripProgressBar
+    Friend WithEvents CopyVolumeLabelToolStripMenuItem As ToolStripMenuItem
 End Class

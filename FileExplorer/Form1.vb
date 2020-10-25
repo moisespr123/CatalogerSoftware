@@ -87,7 +87,7 @@ Public Class Form1
                 MD5HashToString += b.ToString("x2")
             Next
             file.Close()
-            SQL.InsertFile(System.IO.Path.GetFileName(path), parent, VolumeLabel, MD5HashToString, System.IO.Path.GetExtension(path), System.IO.File.GetLastWriteTimeUtc(path), My.Computer.FileSystem.GetFileInfo(path).Length / 1024, path)
+            SQL.InsertFile(IO.Path.GetFileName(path), parent, VolumeLabel, MD5HashToString, IO.Path.GetExtension(path), IO.File.GetLastWriteTimeUtc(path), My.Computer.FileSystem.GetFileInfo(path).Length / 1024, path)
         End If
     End Sub
     Private Sub RefreshListAfterAddingFiles(node As TreeNode)
@@ -209,6 +209,12 @@ Public Class Form1
             TextRenderer.DrawText(e.Graphics, e.Node.Text, font, e.Bounds, SystemColors.HighlightText, TextFormatFlags.GlyphOverhangPadding)
         Else
             e.DrawDefault = True
+        End If
+    End Sub
+
+    Private Sub CopyVolumeLabelToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CopyVolumeLabelToolStripMenuItem.Click
+        If ListView1.SelectedIndices.Count > 0 Then
+            Clipboard.SetText(CurrentFiles(CurrentFiles.Keys(ListView1.SelectedIndices(0))).VolumeLabel)
         End If
     End Sub
 End Class
