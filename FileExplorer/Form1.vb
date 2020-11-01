@@ -51,11 +51,16 @@ Public Class Form1
 
     Private Sub GetFiles(node As TreeNode)
         CurrentFiles = SQL.GetFiles(node.Tag)
+        PopulateListView()
+    End Sub
+
+    Private Sub PopulateListView()
         ListView1.Items.Clear()
         For Each file As Integer In CurrentFiles.Keys
             Dim item As ListViewItem = New ListViewItem(CurrentFiles(file).Name)
             Dim subItems As ListViewItem.ListViewSubItem() = New ListViewItem.ListViewSubItem() {New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Type), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).ModifiedDate),
-               New ListViewItem.ListViewSubItem(item, String.Format("{0:N2} KB", CurrentFiles(file).FileSize)), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).VolumeLabel), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Checksum), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).OriginalPath)}
+               New ListViewItem.ListViewSubItem(item, String.Format("{0:N2} KB", CurrentFiles(file).FileSize)), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).VolumeLabel), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Checksum),
+               New ListViewItem.ListViewSubItem(item, CurrentFiles(file).OriginalPath), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Comment)}
             item.SubItems.AddRange(subItems)
             ListView1.Items.Add(item)
         Next
@@ -215,6 +220,31 @@ Public Class Form1
     Private Sub CopyVolumeLabelToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CopyVolumeLabelToolStripMenuItem.Click
         If ListView1.SelectedIndices.Count > 0 Then
             Clipboard.SetText(CurrentFiles(CurrentFiles.Keys(ListView1.SelectedIndices(0))).VolumeLabel)
+        End If
+    End Sub
+
+    Private Sub CopyLabelToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CopyLabelToolStripMenuItem.Click
+        If TreeView1.SelectedNode IsNot Nothing Then
+            Clipboard.SetText(TreeView1.SelectedNode.Name)
+        End If
+    End Sub
+
+    Private Sub SearchToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SearchToolStripMenuItem.Click
+        Dim SearchString As String = InputBox("Search for?")
+        If Not String.IsNullOrEmpty(SearchString) Then
+            CurrentFiles = SQL.SearchFiles(SearchString)
+        End If
+        PopulateListView()
+    End Sub
+
+    Private Sub EditCommentToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EditCommentToolStripMenuItem.Click
+        Dim File As ListView.SelectedIndexCollection = ListView1.SelectedIndices
+        If ListView1.SelectedIndices.Count > 0 Then
+            Dim Comment As String = InputBox("Enter a comment for the selected file", , CurrentFiles(CurrentFiles.Keys(File(0))).Comment)
+            If Not String.IsNullOrEmpty(Comment) Then
+                SQL.UpdateFileComment(CurrentFiles.Keys(File(0)), Comment)
+            End If
+            GetFiles(TreeView1.SelectedNode)
         End If
     End Sub
 End Class

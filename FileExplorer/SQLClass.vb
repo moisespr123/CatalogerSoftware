@@ -95,7 +95,7 @@ Public Class SQLClass
         Return result
     End Function
     Public Function GetFiles(parent As Integer) As Dictionary(Of Integer, FileClass)
-        Dim SQLQuery As String = "SELECT id, name, vol_label, checksum, type, file_size, mod_date, orig_path FROM files WHERE parent=@parent ORDER BY name"
+        Dim SQLQuery As String = "SELECT id, name, vol_label, checksum, type, file_size, mod_date, orig_path, comment FROM files WHERE parent=@parent ORDER BY name"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
         Dim Command As New MySqlCommand(SQLQuery, Connection)
         Command.Parameters.AddWithValue("@parent", parent)
@@ -104,14 +104,14 @@ Public Class SQLClass
         Dim files As New Dictionary(Of Integer, FileClass)
         If reader.HasRows Then
             While reader.Read
-                files.Add(reader("id"), New FileClass(reader("name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path")))
+                files.Add(reader("id"), New FileClass(reader("name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment")))
             End While
         End If
         Connection.Close()
         Return files
     End Function
     Public Function GetFilesNameAsKey(parent As Integer) As Dictionary(Of String, FileClass)
-        Dim SQLQuery As String = "SELECT id, name, vol_label, checksum, type, file_size, mod_date, orig_path FROM files WHERE parent=@parent ORDER BY name"
+        Dim SQLQuery As String = "SELECT id, name, vol_label, checksum, type, file_size, mod_date, orig_path, comment FROM files WHERE parent=@parent ORDER BY name"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
         Dim Command As New MySqlCommand(SQLQuery, Connection)
         Command.Parameters.AddWithValue("@parent", parent)
@@ -120,7 +120,7 @@ Public Class SQLClass
         Dim files As New Dictionary(Of String, FileClass)
         If reader.HasRows Then
             While reader.Read
-                files.Add(reader("name"), New FileClass(reader("name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path")))
+                files.Add(reader("name"), New FileClass(reader("name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment")))
             End While
         End If
         Connection.Close()
@@ -138,6 +138,7 @@ Public Class SQLClass
         Connection.Close()
         Return id
     End Function
+
     Public Function InsertFile(name As String, parent As Integer, vol_label As String, checksum As String, type As String, mod_date As Date, file_size As Double, orig_path As String) As Integer
         Dim SQLQuery As String = "INSERT INTO files (name, parent, vol_label, checksum, type, mod_date, file_size, orig_path) VALUES (@name, @parent, @vol_label, @checksum, @type, @mod_date, @file_size, @orig_path)"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
@@ -157,4 +158,32 @@ Public Class SQLClass
         Return id
     End Function
 
+    Public Function SearchFiles(searchString As String) As Dictionary(Of Integer, FileClass)
+        Dim SQLQuery As String = "SELECT id, name, vol_label, checksum, type, file_size, mod_date, orig_path, comment FROM files WHERE name LIKE @searchstring OR vol_label LIKE @searchstring OR orig_path LIKE @searchstring OR comment LIKE @searchstring ORDER BY name"
+        Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
+        Dim Command As New MySqlCommand(SQLQuery, Connection)
+        Command.Parameters.AddWithValue("@searchstring", "%" + searchString + "%")
+        Connection.Open()
+        Dim reader As MySqlDataReader = Command.ExecuteReader
+        Dim files As New Dictionary(Of Integer, FileClass)
+        If reader.HasRows Then
+            While reader.Read
+                files.Add(reader("id"), New FileClass(reader("name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment")))
+            End While
+        End If
+        Connection.Close()
+        Return files
+    End Function
+
+    Public Function UpdateFileComment(id As Integer, text As String) As Integer
+        Dim SQLQuery As String = "UPDATE files SET comment=@text WHERE id=@id"
+        Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
+        Dim Command As New MySqlCommand(SQLQuery, Connection)
+        Command.Parameters.AddWithValue("@id", id)
+        Command.Parameters.AddWithValue("@text", text)
+        Connection.Open()
+        Dim result As Integer = Command.ExecuteNonQuery()
+        Connection.Close()
+        Return result
+    End Function
 End Class
