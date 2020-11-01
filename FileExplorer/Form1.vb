@@ -4,6 +4,7 @@ Imports System.Security.Cryptography
 Public Class Form1
     Private SQL As New SQLClass()
     Private CurrentFiles As Dictionary(Of Integer, FileClass)
+    Private lvwColumnSorter As ListViewColumnSorter
 
     Private Sub GetFolders(ByVal parent As Integer, ByVal nodeToAddTo As TreeNode)
         Dim aNode As TreeNode
@@ -25,6 +26,8 @@ Public Class Form1
         Next
     End Sub
     Private Sub Initialize()
+        lvwColumnSorter = New ListViewColumnSorter()
+        ListView1.ListViewItemSorter = lvwColumnSorter
         Dim rootfolder As Dictionary(Of String, Integer) = SQL.GetFolders(0)
         If rootfolder.Count = 0 Then
             CreateFolder(0, String.Empty, True)
@@ -246,5 +249,19 @@ Public Class Form1
             End If
             GetFiles(TreeView1.SelectedNode)
         End If
+    End Sub
+
+    Private Sub ListView1_ColumnClick(sender As Object, e As ColumnClickEventArgs) Handles ListView1.ColumnClick
+        If e.Column = lvwColumnSorter.SortColumn Then
+            If lvwColumnSorter.Order = SortOrder.Ascending Then
+                lvwColumnSorter.Order = SortOrder.Descending
+            Else
+                lvwColumnSorter.Order = SortOrder.Ascending
+            End If
+        Else
+            lvwColumnSorter.SortColumn = e.Column
+            lvwColumnSorter.Order = SortOrder.Ascending
+        End If
+        ListView1.Sort()
     End Sub
 End Class

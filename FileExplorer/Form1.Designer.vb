@@ -184,7 +184,7 @@ Partial Class Form1
         '
         Me.ContextMenuStrip2.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DeleteToolStripMenuItem1, Me.CopyVolumeLabelToolStripMenuItem, Me.EditCommentToolStripMenuItem})
         Me.ContextMenuStrip2.Name = "ContextMenuStrip2"
-        Me.ContextMenuStrip2.Size = New System.Drawing.Size(181, 92)
+        Me.ContextMenuStrip2.Size = New System.Drawing.Size(177, 70)
         '
         'DeleteToolStripMenuItem1
         '
