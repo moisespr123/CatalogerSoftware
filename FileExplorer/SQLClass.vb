@@ -168,7 +168,7 @@ Public Class SQLClass
         Dim files As New Dictionary(Of Integer, FileClass)
         If reader.HasRows Then
             While reader.Read
-                files.Add(reader("id"), New FileClass(reader("name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment")))
+                files.Add(reader("id"), New FileClass(reader("name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment").ToString()))
             End While
         End If
         Connection.Close()

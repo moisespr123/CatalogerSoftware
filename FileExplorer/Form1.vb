@@ -246,8 +246,8 @@ Public Class Form1
             Dim Comment As String = InputBox("Enter a comment for the selected file", , CurrentFiles(CurrentFiles.Keys(File(0))).Comment)
             If Not String.IsNullOrEmpty(Comment) Then
                 SQL.UpdateFileComment(CurrentFiles.Keys(File(0)), Comment)
+                GetFiles(TreeView1.SelectedNode)
             End If
-            GetFiles(TreeView1.SelectedNode)
         End If
     End Sub
 
