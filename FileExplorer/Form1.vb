@@ -65,7 +65,7 @@ Public Class Form1
                New ListViewItem.ListViewSubItem(item, String.Format("{0:N2} KB", CurrentFiles(file).FileSize)), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).VolumeLabel), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Checksum),
                New ListViewItem.ListViewSubItem(item, CurrentFiles(file).OriginalPath), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Comment)}
             item.SubItems.AddRange(subItems)
-            ListView1.Items.Add(item)
+            ListView1.Items.Add(item).Tag = file
         Next
         ListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize)
     End Sub
@@ -201,7 +201,7 @@ Public Class Form1
         If FilesToDelete.Count > 0 Then
             If MsgBox("Do you really want to delete the selected file(s)?", MsgBoxStyle.YesNo) = MsgBoxResult.Yes Then
                 For Each File As Integer In FilesToDelete
-                    SQL.DeleteFile(CurrentFiles.Keys(File))
+                    SQL.DeleteFile(ListView1.Items(File).Tag)
                 Next
             End If
             GetFiles(TreeView1.SelectedNode)
@@ -222,7 +222,7 @@ Public Class Form1
 
     Private Sub CopyVolumeLabelToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CopyVolumeLabelToolStripMenuItem.Click
         If ListView1.SelectedIndices.Count > 0 Then
-            Clipboard.SetText(CurrentFiles(CurrentFiles.Keys(ListView1.SelectedIndices(0))).VolumeLabel)
+            Clipboard.SetText(CurrentFiles(ListView1.Items(ListView1.SelectedIndices(0)).Tag).VolumeLabel)
         End If
     End Sub
 
@@ -243,9 +243,9 @@ Public Class Form1
     Private Sub EditCommentToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EditCommentToolStripMenuItem.Click
         Dim File As ListView.SelectedIndexCollection = ListView1.SelectedIndices
         If ListView1.SelectedIndices.Count > 0 Then
-            Dim Comment As String = InputBox("Enter a comment for the selected file", , CurrentFiles(CurrentFiles.Keys(File(0))).Comment)
+            Dim Comment As String = InputBox("Enter a comment for the selected file", , CurrentFiles(ListView1.Items(File(0)).Tag).Comment)
             If Not String.IsNullOrEmpty(Comment) Then
-                SQL.UpdateFileComment(CurrentFiles.Keys(File(0)), Comment)
+                SQL.UpdateFileComment(ListView1.Items(File(0)).Tag, Comment)
                 GetFiles(TreeView1.SelectedNode)
             End If
         End If
