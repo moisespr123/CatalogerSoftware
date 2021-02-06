@@ -2,7 +2,7 @@
 Imports System.Security.Cryptography
 
 Public Class Form1
-    Private SQL As New SQLClass()
+    Public SQL As New SQLClass()
     Private CurrentFiles As Dictionary(Of Integer, FileClass)
     Private lvwColumnSorter As ListViewColumnSorter
 
@@ -63,7 +63,7 @@ Public Class Form1
             Dim item As ListViewItem = New ListViewItem(CurrentFiles(file).Name)
             Dim subItems As ListViewItem.ListViewSubItem() = New ListViewItem.ListViewSubItem() {New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Type), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).ModifiedDate),
                New ListViewItem.ListViewSubItem(item, String.Format("{0:N2} KB", CurrentFiles(file).FileSize)), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).VolumeLabel), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Checksum),
-               New ListViewItem.ListViewSubItem(item, CurrentFiles(file).OriginalPath), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Comment)}
+               New ListViewItem.ListViewSubItem(item, CurrentFiles(file).OriginalPath), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Comment), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Spindle)}
             item.SubItems.AddRange(subItems)
             ListView1.Items.Add(item).Tag = file
         Next
@@ -76,7 +76,7 @@ Public Class Form1
     End Sub
     Private Sub Form1_DragDrop(sender As Object, e As DragEventArgs) Handles MyBase.DragDrop
         Dim node As TreeNode = TreeView1.SelectedNode
-        Dim thread As New System.Threading.Thread(Sub() AddFilesAndFolders(CType(e.Data.GetData(DataFormats.FileDrop), String()), node))
+        Dim thread As New Threading.Thread(Sub() AddFilesAndFolders(CType(e.Data.GetData(DataFormats.FileDrop), String()), node))
         thread.Start()
 
     End Sub
@@ -263,5 +263,9 @@ Public Class Form1
             lvwColumnSorter.Order = SortOrder.Ascending
         End If
         ListView1.Sort()
+    End Sub
+
+    Private Sub LabelManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LabelManagementToolStripMenuItem.Click
+        LabelManagement.Show()
     End Sub
 End Class

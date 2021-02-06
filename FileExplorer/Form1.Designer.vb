@@ -40,9 +40,11 @@ Partial Class Form1
         Me.ColumnHeader5 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader6 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader8 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader9 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ContextMenuStrip2 = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.DeleteToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.CopyVolumeLabelToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.EditCommentToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SearchToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -51,7 +53,7 @@ Partial Class Form1
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.ToolStripProgressBar1 = New System.Windows.Forms.ToolStripProgressBar()
         Me.StatusToolStripLabel = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.EditCommentToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.LabelManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
@@ -97,6 +99,7 @@ Partial Class Form1
         '
         'ContextMenuStrip1
         '
+        Me.ContextMenuStrip1.ImageScalingSize = New System.Drawing.Size(32, 32)
         Me.ContextMenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewFolderToolStripMenuItem, Me.DeleteToolStripMenuItem, Me.RenameToolStripMenuItem, Me.CopyLabelToolStripMenuItem})
         Me.ContextMenuStrip1.Name = "ContextMenuStrip1"
         Me.ContextMenuStrip1.Size = New System.Drawing.Size(158, 92)
@@ -134,7 +137,7 @@ Partial Class Form1
         'ListView1
         '
         Me.ListView1.AllowColumnReorder = True
-        Me.ListView1.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader1, Me.ColumnHeader2, Me.ColumnHeader3, Me.ColumnHeader7, Me.ColumnHeader4, Me.ColumnHeader5, Me.ColumnHeader6, Me.ColumnHeader8})
+        Me.ListView1.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader1, Me.ColumnHeader2, Me.ColumnHeader3, Me.ColumnHeader7, Me.ColumnHeader4, Me.ColumnHeader5, Me.ColumnHeader6, Me.ColumnHeader8, Me.ColumnHeader9})
         Me.ListView1.ContextMenuStrip = Me.ContextMenuStrip2
         Me.ListView1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.ListView1.HideSelection = False
@@ -180,8 +183,13 @@ Partial Class Form1
         '
         Me.ColumnHeader8.Text = "Comment"
         '
+        'ColumnHeader9
+        '
+        Me.ColumnHeader9.Text = "Spindle"
+        '
         'ContextMenuStrip2
         '
+        Me.ContextMenuStrip2.ImageScalingSize = New System.Drawing.Size(32, 32)
         Me.ContextMenuStrip2.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DeleteToolStripMenuItem1, Me.CopyVolumeLabelToolStripMenuItem, Me.EditCommentToolStripMenuItem})
         Me.ContextMenuStrip2.Name = "ContextMenuStrip2"
         Me.ContextMenuStrip2.Size = New System.Drawing.Size(177, 70)
@@ -189,17 +197,24 @@ Partial Class Form1
         'DeleteToolStripMenuItem1
         '
         Me.DeleteToolStripMenuItem1.Name = "DeleteToolStripMenuItem1"
-        Me.DeleteToolStripMenuItem1.Size = New System.Drawing.Size(180, 22)
+        Me.DeleteToolStripMenuItem1.Size = New System.Drawing.Size(176, 22)
         Me.DeleteToolStripMenuItem1.Text = "Delete"
         '
         'CopyVolumeLabelToolStripMenuItem
         '
         Me.CopyVolumeLabelToolStripMenuItem.Name = "CopyVolumeLabelToolStripMenuItem"
-        Me.CopyVolumeLabelToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.CopyVolumeLabelToolStripMenuItem.Size = New System.Drawing.Size(176, 22)
         Me.CopyVolumeLabelToolStripMenuItem.Text = "Copy Volume Label"
+        '
+        'EditCommentToolStripMenuItem
+        '
+        Me.EditCommentToolStripMenuItem.Name = "EditCommentToolStripMenuItem"
+        Me.EditCommentToolStripMenuItem.Size = New System.Drawing.Size(176, 22)
+        Me.EditCommentToolStripMenuItem.Text = "Edit Comment"
         '
         'MenuStrip1
         '
+        Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(32, 32)
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.AboutToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
@@ -209,7 +224,7 @@ Partial Class Form1
         '
         'FileToolStripMenuItem
         '
-        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SearchToolStripMenuItem})
+        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SearchToolStripMenuItem, Me.LabelManagementToolStripMenuItem})
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
         Me.FileToolStripMenuItem.Size = New System.Drawing.Size(37, 20)
         Me.FileToolStripMenuItem.Text = "File"
@@ -217,7 +232,7 @@ Partial Class Form1
         'SearchToolStripMenuItem
         '
         Me.SearchToolStripMenuItem.Name = "SearchToolStripMenuItem"
-        Me.SearchToolStripMenuItem.Size = New System.Drawing.Size(109, 22)
+        Me.SearchToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
         Me.SearchToolStripMenuItem.Text = "Search"
         '
         'AboutToolStripMenuItem
@@ -228,6 +243,7 @@ Partial Class Form1
         '
         'StatusStrip1
         '
+        Me.StatusStrip1.ImageScalingSize = New System.Drawing.Size(32, 32)
         Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel1, Me.ToolStripProgressBar1, Me.StatusToolStripLabel})
         Me.StatusStrip1.Location = New System.Drawing.Point(0, 426)
         Me.StatusStrip1.Name = "StatusStrip1"
@@ -254,11 +270,11 @@ Partial Class Form1
         Me.StatusToolStripLabel.Size = New System.Drawing.Size(43, 19)
         Me.StatusToolStripLabel.Text = "Ready"
         '
-        'EditCommentToolStripMenuItem
+        'LabelManagementToolStripMenuItem
         '
-        Me.EditCommentToolStripMenuItem.Name = "EditCommentToolStripMenuItem"
-        Me.EditCommentToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.EditCommentToolStripMenuItem.Text = "Edit Comment"
+        Me.LabelManagementToolStripMenuItem.Name = "LabelManagementToolStripMenuItem"
+        Me.LabelManagementToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.LabelManagementToolStripMenuItem.Text = "Label Management"
         '
         'Form1
         '
@@ -315,4 +331,6 @@ Partial Class Form1
     Friend WithEvents SearchToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ColumnHeader8 As ColumnHeader
     Friend WithEvents EditCommentToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ColumnHeader9 As ColumnHeader
+    Friend WithEvents LabelManagementToolStripMenuItem As ToolStripMenuItem
 End Class
