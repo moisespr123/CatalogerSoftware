@@ -7,13 +7,10 @@ Public Class Form1
     Private lvwColumnSorter As ListViewColumnSorter
 
     Private Sub GetFolders(ByVal parent As Integer, ByVal nodeToAddTo As TreeNode)
-        Dim aNode As TreeNode
         Dim folders As Dictionary(Of String, Integer) = SQL.GetFolders(parent)
         For Each folder As String In folders.Keys
             If Not nodeToAddTo.Nodes.ContainsKey(folder) Then
-                aNode = New TreeNode(folder)
-                aNode.Name = folder
-                aNode.Tag = folders(folder)
+                Dim aNode As New TreeNode(folder) With {.Name = folder, .Tag = folders(folder)}
                 GetFolders(folders(folder), aNode)
                 If TreeView1.InvokeRequired Then
                     TreeView1.BeginInvoke(Sub() nodeToAddTo.Nodes.Add(aNode))
@@ -36,9 +33,7 @@ Public Class Form1
         If rootfolder.Count > 0 Then
             Dim rootNode As TreeNode
             For Each key As String In rootfolder.Keys
-                rootNode = New TreeNode(key)
-                rootNode.Name = rootfolder(key)
-                rootNode.Tag = rootfolder(key)
+                rootNode = New TreeNode(key) With {.Name = rootfolder(key), .Tag = rootfolder(key)}
                 GetFolders(rootfolder(key), rootNode)
                 TreeView1.Nodes.Add(rootNode)
             Next
@@ -48,13 +43,15 @@ Public Class Form1
         Initialize()
     End Sub
 
-    Private Sub treeView1_NodeMouseClick(ByVal sender As Object, ByVal e As TreeNodeMouseClickEventArgs) Handles TreeView1.NodeMouseClick
+    Private Sub TreeView1_NodeMouseClick(ByVal sender As Object, ByVal e As TreeNodeMouseClickEventArgs) Handles TreeView1.NodeMouseClick
         GetFiles(e.Node)
     End Sub
 
     Private Sub GetFiles(node As TreeNode)
-        CurrentFiles = SQL.GetFiles(node.Tag)
-        PopulateListView()
+        If node.Tag IsNot "Search" Then
+            CurrentFiles = SQL.GetFiles(node.Tag)
+            PopulateListView()
+        End If
     End Sub
 
     Private Sub PopulateListView()
@@ -98,7 +95,7 @@ Public Class Form1
             SQL.InsertFile(IO.Path.GetFileName(path), parent, VolumeLabel, MD5HashToString, IO.Path.GetExtension(path), IO.File.GetLastWriteTimeUtc(path), My.Computer.FileSystem.GetFileInfo(path).Length / 1024, path)
         End If
     End Sub
-    Private Sub RefreshListAfterAddingFiles(node As TreeNode)
+    Private Sub RefreshListAfterAddingFiles()
         If TreeView1.InvokeRequired Then
             TreeView1.BeginInvoke(Sub() GetFiles(TreeView1.SelectedNode))
         Else
@@ -108,7 +105,7 @@ Public Class Form1
     Private Sub GetDirectoriesAndFiles(ByVal BaseFolder As DirectoryInfo, parent As Integer, VolumeLabel As String, node As TreeNode)
         For Each FI As FileInfo In BaseFolder.GetFiles()
             AddFile(FI.FullName, parent, VolumeLabel)
-            RefreshListAfterAddingFiles(node)
+            RefreshListAfterAddingFiles()
         Next
         For Each subF As DirectoryInfo In BaseFolder.GetDirectories()
             Dim CreatedFolderId As Integer = CreateFolder(parent, subF.Name)
@@ -129,7 +126,7 @@ Public Class Form1
         For Each path In filepath
             If File.Exists(path) Then
                 AddFile(path, node.Tag, VolumeLabel)
-                RefreshListAfterAddingFiles(node)
+                RefreshListAfterAddingFiles()
             Else
                 Dim CreatedFolderId As Integer = CreateFolder(node.Tag, System.IO.Path.GetFileName(path))
                 GetFolders(node.Tag, node)
@@ -137,7 +134,7 @@ Public Class Form1
             End If
         Next
         GetFolders(node.Tag, node)
-        RefreshListAfterAddingFiles(node)
+        RefreshListAfterAddingFiles()
         StatusStrip1.BeginInvoke(Sub()
                                      ToolStripProgressBar1.Style = ProgressBarStyle.Continuous
                                      StatusToolStripLabel.Text = "Ready"
@@ -231,12 +228,54 @@ Public Class Form1
             Clipboard.SetText(TreeView1.SelectedNode.Name)
         End If
     End Sub
+    Private Sub AddNodesToSearchNode(FileParentList As List(Of Integer), nodeToAddTo As TreeNode)
+        For Each Parent As Integer In FileParentList
+            If Parent > 0 Then
+                Dim ParentName As String = SQL.GetFolderName(Parent)
+                If Not nodeToAddTo.Nodes.ContainsKey(ParentName) Then
+                    Dim aNode As New TreeNode(ParentName) With {.Name = ParentName, .Tag = Parent}
+                    If TreeView1.InvokeRequired Then
+                        TreeView1.BeginInvoke(Sub() nodeToAddTo.Nodes.Add(aNode))
+                    Else
+                        nodeToAddTo.Nodes.Add(aNode)
+                        nodeToAddTo = aNode
+                    End If
+                Else
+                    nodeToAddTo = nodeToAddTo.Nodes(ParentName)
+                End If
+            End If
+        Next
+    End Sub
 
     Private Sub SearchToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SearchToolStripMenuItem.Click
         Dim SearchString As String = InputBox("Search for?")
         If Not String.IsNullOrEmpty(SearchString) Then
-            CurrentFiles = SQL.SearchFiles(SearchString)
+            SearchFunction(SQL.SearchFiles(SearchString))
         End If
+    End Sub
+
+    Public Sub SearchFunction(SearchResults As Dictionary(Of Integer, FileClass))
+        CurrentFiles = SearchResults
+        Dim FileParents As New Dictionary(Of Integer, List(Of Integer))
+        For Each File In CurrentFiles
+            Dim Parent As Integer = SQL.GetFileParent(File.Key)
+            Dim FileParentList As New List(Of Integer) From {Parent}
+            While Parent > 0
+                Parent = SQL.GetFolderParent(Parent)
+                FileParentList.Add(Parent)
+            End While
+            FileParents.Add(File.Key, FileParentList)
+        Next
+        If TreeView1.Nodes.ContainsKey("Search") Then
+            TreeView1.Nodes.RemoveByKey("Search")
+        End If
+        Dim SearchNode As New TreeNode("Search Results") With {.Name = "Search", .Tag = "Search"}
+        TreeView1.Nodes.Add(SearchNode)
+        For Each File In CurrentFiles
+            FileParents(File.Key).Reverse()
+            AddNodesToSearchNode(FileParents(File.Key), SearchNode)
+        Next
+
         PopulateListView()
     End Sub
 

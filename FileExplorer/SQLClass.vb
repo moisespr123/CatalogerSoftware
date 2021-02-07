@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 Imports MySql.Data.MySqlClient
 Public Class SQLClass
-    Private MySQLString As String = ""
+    Private ReadOnly MySQLString As String = ""
     Public Sub New()
         If IO.File.Exists("Config.txt") Then
             Dim ConfigFile As StreamReader = New StreamReader("Config.txt")
@@ -51,6 +51,23 @@ Public Class SQLClass
         End If
         Connection.Close()
         Return folders
+    End Function
+
+    Public Function GetFolderName(id As Integer) As String
+        Dim SQLQuery As String = "SELECT name FROM folders WHERE id=@id "
+        Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
+        Dim Command As New MySqlCommand(SQLQuery, Connection)
+        Command.Parameters.AddWithValue("@id", id)
+        Connection.Open()
+        Dim reader As MySqlDataReader = Command.ExecuteReader
+        Dim folderName As String = String.Empty
+        If reader.HasRows Then
+            While reader.Read
+                folderName = reader("name")
+            End While
+        End If
+        Connection.Close()
+        Return folderName
     End Function
     Public Function DeleteFiles(parent As Integer) As Integer
         Dim SQLQuery As String = "DELETE FROM files WHERE parent=@parent"
@@ -190,6 +207,23 @@ Public Class SQLClass
         Return files
     End Function
 
+    Public Function GetLabelContents(Label As String) As Dictionary(Of Integer, FileClass)
+        Dim SQLQuery As String = "SELECT id, name, vol_label, checksum, type, file_size, mod_date, orig_path, comment, spindle FROM files WHERE vol_label=@label"
+        Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
+        Dim Command As New MySqlCommand(SQLQuery, Connection)
+        Command.Parameters.AddWithValue("@label", Label)
+        Connection.Open()
+        Dim reader As MySqlDataReader = Command.ExecuteReader
+        Dim files As New Dictionary(Of Integer, FileClass)
+        If reader.HasRows Then
+            While reader.Read
+                files.Add(reader("id"), New FileClass(reader("name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment").ToString(), reader("spindle").ToString()))
+            End While
+        End If
+        Connection.Close()
+        Return files
+    End Function
+
     Public Function UpdateFileComment(id As Integer, text As String) As Integer
         Dim SQLQuery As String = "UPDATE files SET comment=@text WHERE id=@id"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
@@ -224,4 +258,37 @@ Public Class SQLClass
         Return result
     End Function
 
+    Public Function GetFileParent(id As Integer) As Integer
+        Dim SQLQuery As String = "SELECT parent FROM files WHERE id=@id"
+        Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
+        Dim Command As New MySqlCommand(SQLQuery, Connection)
+        Command.Parameters.AddWithValue("@id", id)
+        Connection.Open()
+        Dim reader As MySqlDataReader = Command.ExecuteReader
+        Dim parent As Integer = 0
+        If reader.HasRows Then
+            While reader.Read
+                parent = reader("parent")
+            End While
+        End If
+        Connection.Close()
+        Return parent
+    End Function
+
+    Public Function GetFolderParent(id As Integer) As Integer
+        Dim SQLQuery As String = "SELECT parent FROM folders WHERE id=@id"
+        Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
+        Dim Command As New MySqlCommand(SQLQuery, Connection)
+        Command.Parameters.AddWithValue("@id", id)
+        Connection.Open()
+        Dim reader As MySqlDataReader = Command.ExecuteReader
+        Dim parent As Integer = 0
+        If reader.HasRows Then
+            While reader.Read
+                parent = reader("parent")
+            End While
+        End If
+        Connection.Close()
+        Return parent
+    End Function
 End Class

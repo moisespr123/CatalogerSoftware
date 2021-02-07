@@ -36,4 +36,11 @@
             End If
         End If
     End Sub
+
+    Private Sub ListView1_MouseDoubleClick(sender As Object, e As MouseEventArgs) Handles ListView1.MouseDoubleClick
+        Dim Label As ListView.SelectedIndexCollection = ListView1.SelectedIndices
+        If ListView1.SelectedIndices.Count > 0 Then
+            Form1.SearchFunction(Form1.SQL.GetLabelContents(ListView1.Items(Label(0)).Text))
+        End If
+    End Sub
 End Class
