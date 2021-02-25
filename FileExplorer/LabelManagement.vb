@@ -29,9 +29,9 @@
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Dim Label As ListView.SelectedIndexCollection = ListView1.SelectedIndices
         If ListView1.SelectedIndices.Count > 0 Then
-            Dim Spindle As String = InputBox("Enter the new label name", , ListView1.Items(Label(0)).Text)
-            If Not String.IsNullOrEmpty(Spindle) Then
-                Form1.SQL.UpdateLabel(ListView1.Items(Label(0)).Text)
+            Dim New_Label As String = InputBox("Enter the new label name", , ListView1.Items(Label(0)).Text)
+            If Not String.IsNullOrEmpty(New_Label) Then
+                Form1.SQL.UpdateLabel(ListView1.Items(Label(0)).Text, New_Label)
                 PopulateListView()
             End If
         End If

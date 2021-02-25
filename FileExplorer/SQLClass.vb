@@ -247,11 +247,12 @@ Public Class SQLClass
         Return result
     End Function
 
-    Public Function UpdateLabel(label As String) As Integer
-        Dim SQLQuery As String = "UPDATE files SET vol_label=@label WHERE vol_label=@label"
+    Public Function UpdateLabel(label As String, new_label As String) As Integer
+        Dim SQLQuery As String = "UPDATE files SET vol_label=@new_label WHERE vol_label=@label"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
         Dim Command As New MySqlCommand(SQLQuery, Connection)
         Command.Parameters.AddWithValue("@label", label)
+        Command.Parameters.AddWithValue("@new_label", new_label)
         Connection.Open()
         Dim result As Integer = Command.ExecuteNonQuery()
         Connection.Close()
