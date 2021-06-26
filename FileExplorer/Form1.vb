@@ -4,6 +4,7 @@ Imports System.Security.Cryptography
 Public Class Form1
     Public SQL As New SQLClass()
     Private CurrentFiles As Dictionary(Of Integer, FileClass)
+    Private SearchLabel As String = ""
     Private lvwColumnSorter As ListViewColumnSorter
 
     Private Sub GetFolders(ByVal parent As Integer, ByVal nodeToAddTo As TreeNode)
@@ -57,6 +58,11 @@ Public Class Form1
     Private Sub PopulateListView()
         ListView1.Items.Clear()
         For Each file As Integer In CurrentFiles.Keys
+            If Not SearchLabel = "" And FilterSearchResultsToolStripMenuItem.Checked Then
+                If Not CurrentFiles(file).VolumeLabel = SearchLabel Then
+                    Continue For
+                End If
+            End If
             Dim item As ListViewItem = New ListViewItem(CurrentFiles(file).Name)
             Dim subItems As ListViewItem.ListViewSubItem() = New ListViewItem.ListViewSubItem() {New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Type), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).ModifiedDate),
                New ListViewItem.ListViewSubItem(item, String.Format("{0:N2} KB", CurrentFiles(file).FileSize)), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).VolumeLabel), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Checksum),
@@ -77,9 +83,9 @@ Public Class Form1
         thread.Start()
 
     End Sub
-    Private Sub AddFile(path As String, parent As Integer, VolumeLabel As String)
-        Dim files As Dictionary(Of String, FileClass) = SQL.GetFilesNameAsKey(parent)
-        If Not files.Keys.Contains(System.IO.Path.GetFileName(path)) Then
+    Private Sub AddFile(path As String, parent As Integer, VolumeLabel As String, files As Dictionary(Of String, FileClass))
+        Dim Filename As String = IO.Path.GetFileName(path)
+        If Not files.Keys.Contains(IO.Path.GetFileName(path)) Then
             StatusStrip1.BeginInvoke(Sub()
                                          ToolStripProgressBar1.Style = ProgressBarStyle.Marquee
                                          StatusToolStripLabel.Text = "Adding file: " + path
@@ -92,25 +98,27 @@ Public Class Form1
                 MD5HashToString += b.ToString("x2")
             Next
             file.Close()
-            SQL.InsertFile(IO.Path.GetFileName(path), parent, VolumeLabel, MD5HashToString, IO.Path.GetExtension(path), IO.File.GetLastWriteTimeUtc(path), My.Computer.FileSystem.GetFileInfo(path).Length / 1024, path)
+            SQL.InsertFile(Filename, parent, VolumeLabel, MD5HashToString, IO.Path.GetExtension(path), IO.File.GetLastWriteTimeUtc(path), My.Computer.FileSystem.GetFileInfo(path).Length / 1024, path)
         End If
     End Sub
     Private Sub RefreshListAfterAddingFiles()
-        If TreeView1.InvokeRequired Then
-            TreeView1.BeginInvoke(Sub() GetFiles(TreeView1.SelectedNode))
-        Else
-            GetFiles(TreeView1.SelectedNode)
+        If RefreshFileListAfterOperationToolStripMenuItem.Checked Then
+            If TreeView1.InvokeRequired Then
+                TreeView1.BeginInvoke(Sub() GetFiles(TreeView1.SelectedNode))
+            Else
+                GetFiles(TreeView1.SelectedNode)
+            End If
         End If
     End Sub
-    Private Sub GetDirectoriesAndFiles(ByVal BaseFolder As DirectoryInfo, parent As Integer, VolumeLabel As String, node As TreeNode)
+    Private Sub GetDirectoriesAndFiles(ByVal BaseFolder As DirectoryInfo, parent As Integer, VolumeLabel As String, node As TreeNode, files As Dictionary(Of String, FileClass))
         For Each FI As FileInfo In BaseFolder.GetFiles()
-            AddFile(FI.FullName, parent, VolumeLabel)
+            AddFile(FI.FullName, parent, VolumeLabel, files)
             RefreshListAfterAddingFiles()
         Next
         For Each subF As DirectoryInfo In BaseFolder.GetDirectories()
             Dim CreatedFolderId As Integer = CreateFolder(parent, subF.Name)
             GetFolders(node.Tag, node)
-            GetDirectoriesAndFiles(subF, CreatedFolderId, VolumeLabel, node)
+            GetDirectoriesAndFiles(subF, CreatedFolderId, VolumeLabel, node, SQL.GetFilesNameAsKey(CreatedFolderId))
         Next
     End Sub
 
@@ -124,13 +132,14 @@ Public Class Form1
                                      StatusToolStripLabel.Text = "Adding files"
                                  End Sub)
         For Each path In filepath
+            Dim files As Dictionary(Of String, FileClass) = SQL.GetFilesNameAsKey(node.Tag)
             If File.Exists(path) Then
-                AddFile(path, node.Tag, VolumeLabel)
+                AddFile(path, node.Tag, VolumeLabel, files)
                 RefreshListAfterAddingFiles()
             Else
-                Dim CreatedFolderId As Integer = CreateFolder(node.Tag, System.IO.Path.GetFileName(path))
+                Dim CreatedFolderId As Integer = CreateFolder(node.Tag, IO.Path.GetFileName(path))
                 GetFolders(node.Tag, node)
-                GetDirectoriesAndFiles(New DirectoryInfo(path), CreatedFolderId, VolumeLabel, node)
+                GetDirectoriesAndFiles(New DirectoryInfo(path), CreatedFolderId, VolumeLabel, node, SQL.GetFilesNameAsKey(CreatedFolderId))
             End If
         Next
         GetFolders(node.Tag, node)
@@ -229,20 +238,26 @@ Public Class Form1
         End If
     End Sub
     Private Sub AddNodesToSearchNode(FileParentList As List(Of Integer), nodeToAddTo As TreeNode)
+        Dim Folders As New Dictionary(Of String, Integer)
         For Each Parent As Integer In FileParentList
             If Parent > 0 Then
                 Dim ParentName As String = SQL.GetFolderName(Parent)
-                If Not nodeToAddTo.Nodes.ContainsKey(ParentName) Then
-                    Dim aNode As New TreeNode(ParentName) With {.Name = ParentName, .Tag = Parent}
-                    If TreeView1.InvokeRequired Then
-                        TreeView1.BeginInvoke(Sub() nodeToAddTo.Nodes.Add(aNode))
-                    Else
-                        nodeToAddTo.Nodes.Add(aNode)
-                        nodeToAddTo = aNode
-                    End If
-                Else
-                    nodeToAddTo = nodeToAddTo.Nodes(ParentName)
+                If Not Folders.Keys().Contains(ParentName) Then
+                    Folders.Add(ParentName, Parent)
                 End If
+            End If
+        Next
+        For Each FolderName As String In Folders.Keys
+            If Not nodeToAddTo.Nodes.ContainsKey(FolderName) Then
+                Dim aNode As New TreeNode(FolderName) With {.Name = FolderName, .Tag = Folders(FolderName)}
+                If TreeView1.InvokeRequired Then
+                    TreeView1.BeginInvoke(Sub() nodeToAddTo.Nodes.Add(aNode))
+                Else
+                    nodeToAddTo.Nodes.Add(aNode)
+                    nodeToAddTo = aNode
+                End If
+            Else
+                nodeToAddTo = nodeToAddTo.Nodes(FolderName)
             End If
         Next
     End Sub
@@ -254,7 +269,8 @@ Public Class Form1
         End If
     End Sub
 
-    Public Sub SearchFunction(SearchResults As Dictionary(Of Integer, FileClass))
+    Public Sub SearchFunction(SearchResults As Dictionary(Of Integer, FileClass), Optional Label As String = "")
+        SearchLabel = Label
         CurrentFiles = SearchResults
         Dim FileParents As New Dictionary(Of Integer, List(Of Integer))
         For Each File In CurrentFiles
@@ -275,8 +291,7 @@ Public Class Form1
             FileParents(File.Key).Reverse()
             AddNodesToSearchNode(FileParents(File.Key), SearchNode)
         Next
-
-        PopulateListView()
+        If Not OnlyShowSearchTreeResultsToolStripMenuItem.Checked Then PopulateListView()
     End Sub
 
     Private Sub EditCommentToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EditCommentToolStripMenuItem.Click
@@ -307,4 +322,20 @@ Public Class Form1
     Private Sub LabelManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LabelManagementToolStripMenuItem.Click
         LabelManagement.Show()
     End Sub
+
+    Private Sub SaveChecksumsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveChecksumsToolStripMenuItem.Click
+        Dim Files As ListView.SelectedIndexCollection = ListView1.SelectedIndices
+        If ListView1.SelectedIndices.Count > 0 Then
+            Dim SaveDialog As New SaveFileDialog With {.FileName = "Checksums.md5", .Filter = "MD5 Checksum|*.md5"}
+            Dim result As MsgBoxResult = SaveDialog.ShowDialog()
+            If result = MsgBoxResult.Ok Then
+                Dim ChecksumString As String = ""
+                For Each file In Files
+                    ChecksumString = ChecksumString + CurrentFiles(ListView1.Items(file).tag).Checksum + " *" + CurrentFiles(ListView1.Items(file).tag).Name + Environment.NewLine
+                Next
+                My.Computer.FileSystem.WriteAllText(SaveDialog.FileName, ChecksumString, False, New Text.UTF8Encoding(False))
+            End If
+        End If
+    End Sub
+
 End Class

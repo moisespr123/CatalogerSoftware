@@ -158,6 +158,23 @@ Public Class SQLClass
         Connection.Close()
         Return files
     End Function
+    Public Function GetFileNameAsKey(parent As Integer, name As String) As Dictionary(Of String, FileClass)
+        Dim SQLQuery As String = "SELECT id, name, vol_label, checksum, type, file_size, mod_date, orig_path, comment, spindle FROM files WHERE parent=@parent AND name=@name ORDER BY name"
+        Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
+        Dim Command As New MySqlCommand(SQLQuery, Connection)
+        Command.Parameters.AddWithValue("@parent", parent)
+        Command.Parameters.AddWithValue("@name", name)
+        Connection.Open()
+        Dim reader As MySqlDataReader = Command.ExecuteReader
+        Dim files As New Dictionary(Of String, FileClass)
+        If reader.HasRows Then
+            While reader.Read
+                files.Add(reader("name"), New FileClass(reader("name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment").ToString(), reader("spindle").ToString()))
+            End While
+        End If
+        Connection.Close()
+        Return files
+    End Function
     Public Function InsertFolder(name As String, parent As Integer) As Integer
         Dim SQLQuery As String = "INSERT INTO folders (name, parent) VALUES (@name, @parent)"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)

@@ -45,15 +45,20 @@ Partial Class Form1
         Me.DeleteToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.CopyVolumeLabelToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.EditCommentToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SaveChecksumsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SearchToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.LabelManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.OptionsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.FilterSearchResultsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.ToolStripProgressBar1 = New System.Windows.Forms.ToolStripProgressBar()
         Me.StatusToolStripLabel = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.LabelManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.RefreshFileListAfterOperationToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.OnlyShowSearchTreeResultsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
@@ -190,9 +195,9 @@ Partial Class Form1
         'ContextMenuStrip2
         '
         Me.ContextMenuStrip2.ImageScalingSize = New System.Drawing.Size(32, 32)
-        Me.ContextMenuStrip2.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DeleteToolStripMenuItem1, Me.CopyVolumeLabelToolStripMenuItem, Me.EditCommentToolStripMenuItem})
+        Me.ContextMenuStrip2.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DeleteToolStripMenuItem1, Me.CopyVolumeLabelToolStripMenuItem, Me.EditCommentToolStripMenuItem, Me.SaveChecksumsToolStripMenuItem})
         Me.ContextMenuStrip2.Name = "ContextMenuStrip2"
-        Me.ContextMenuStrip2.Size = New System.Drawing.Size(177, 70)
+        Me.ContextMenuStrip2.Size = New System.Drawing.Size(177, 92)
         '
         'DeleteToolStripMenuItem1
         '
@@ -212,10 +217,16 @@ Partial Class Form1
         Me.EditCommentToolStripMenuItem.Size = New System.Drawing.Size(176, 22)
         Me.EditCommentToolStripMenuItem.Text = "Edit Comment"
         '
+        'SaveChecksumsToolStripMenuItem
+        '
+        Me.SaveChecksumsToolStripMenuItem.Name = "SaveChecksumsToolStripMenuItem"
+        Me.SaveChecksumsToolStripMenuItem.Size = New System.Drawing.Size(176, 22)
+        Me.SaveChecksumsToolStripMenuItem.Text = "Save Checksum(s)"
+        '
         'MenuStrip1
         '
         Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(32, 32)
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.AboutToolStripMenuItem})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.AboutToolStripMenuItem, Me.OptionsToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
         Me.MenuStrip1.Size = New System.Drawing.Size(826, 24)
@@ -232,14 +243,33 @@ Partial Class Form1
         'SearchToolStripMenuItem
         '
         Me.SearchToolStripMenuItem.Name = "SearchToolStripMenuItem"
-        Me.SearchToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.SearchToolStripMenuItem.Size = New System.Drawing.Size(176, 22)
         Me.SearchToolStripMenuItem.Text = "Search"
+        '
+        'LabelManagementToolStripMenuItem
+        '
+        Me.LabelManagementToolStripMenuItem.Name = "LabelManagementToolStripMenuItem"
+        Me.LabelManagementToolStripMenuItem.Size = New System.Drawing.Size(176, 22)
+        Me.LabelManagementToolStripMenuItem.Text = "Label Management"
         '
         'AboutToolStripMenuItem
         '
         Me.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem"
         Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(52, 20)
         Me.AboutToolStripMenuItem.Text = "About"
+        '
+        'OptionsToolStripMenuItem
+        '
+        Me.OptionsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FilterSearchResultsToolStripMenuItem, Me.RefreshFileListAfterOperationToolStripMenuItem, Me.OnlyShowSearchTreeResultsToolStripMenuItem})
+        Me.OptionsToolStripMenuItem.Name = "OptionsToolStripMenuItem"
+        Me.OptionsToolStripMenuItem.Size = New System.Drawing.Size(61, 20)
+        Me.OptionsToolStripMenuItem.Text = "Options"
+        '
+        'FilterSearchResultsToolStripMenuItem
+        '
+        Me.FilterSearchResultsToolStripMenuItem.Name = "FilterSearchResultsToolStripMenuItem"
+        Me.FilterSearchResultsToolStripMenuItem.Size = New System.Drawing.Size(240, 22)
+        Me.FilterSearchResultsToolStripMenuItem.Text = "Filter Search Results"
         '
         'StatusStrip1
         '
@@ -270,11 +300,21 @@ Partial Class Form1
         Me.StatusToolStripLabel.Size = New System.Drawing.Size(43, 19)
         Me.StatusToolStripLabel.Text = "Ready"
         '
-        'LabelManagementToolStripMenuItem
+        'RefreshFileListAfterOperationToolStripMenuItem
         '
-        Me.LabelManagementToolStripMenuItem.Name = "LabelManagementToolStripMenuItem"
-        Me.LabelManagementToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.LabelManagementToolStripMenuItem.Text = "Label Management"
+        Me.RefreshFileListAfterOperationToolStripMenuItem.Checked = True
+        Me.RefreshFileListAfterOperationToolStripMenuItem.CheckOnClick = True
+        Me.RefreshFileListAfterOperationToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.RefreshFileListAfterOperationToolStripMenuItem.Name = "RefreshFileListAfterOperationToolStripMenuItem"
+        Me.RefreshFileListAfterOperationToolStripMenuItem.Size = New System.Drawing.Size(240, 22)
+        Me.RefreshFileListAfterOperationToolStripMenuItem.Text = "Refresh File List After Operation"
+        '
+        'OnlyShowSearchTreeResultsToolStripMenuItem
+        '
+        Me.OnlyShowSearchTreeResultsToolStripMenuItem.CheckOnClick = True
+        Me.OnlyShowSearchTreeResultsToolStripMenuItem.Name = "OnlyShowSearchTreeResultsToolStripMenuItem"
+        Me.OnlyShowSearchTreeResultsToolStripMenuItem.Size = New System.Drawing.Size(240, 22)
+        Me.OnlyShowSearchTreeResultsToolStripMenuItem.Text = "Only Show Search Tree Results"
         '
         'Form1
         '
@@ -333,4 +373,9 @@ Partial Class Form1
     Friend WithEvents EditCommentToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ColumnHeader9 As ColumnHeader
     Friend WithEvents LabelManagementToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents SaveChecksumsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents OptionsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents FilterSearchResultsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents RefreshFileListAfterOperationToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents OnlyShowSearchTreeResultsToolStripMenuItem As ToolStripMenuItem
 End Class
