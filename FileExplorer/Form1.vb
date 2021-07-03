@@ -338,4 +338,12 @@ Public Class Form1
         End If
     End Sub
 
+    Private Sub ListView1_KeyDown(sender As Object, e As KeyEventArgs) Handles ListView1.KeyDown
+        If e.Modifiers = Keys.Control And e.KeyCode = Keys.A Then
+            For i = 0 To ListView1.Items.Count - 1
+                ListView1.Items(i).Selected = True
+            Next
+            e.SuppressKeyPress = True
+        End If
+    End Sub
 End Class

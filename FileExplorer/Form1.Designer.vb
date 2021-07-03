@@ -53,12 +53,12 @@ Partial Class Form1
         Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.OptionsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.FilterSearchResultsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.RefreshFileListAfterOperationToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.OnlyShowSearchTreeResultsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.ToolStripProgressBar1 = New System.Windows.Forms.ToolStripProgressBar()
         Me.StatusToolStripLabel = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.RefreshFileListAfterOperationToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.OnlyShowSearchTreeResultsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
@@ -271,6 +271,22 @@ Partial Class Form1
         Me.FilterSearchResultsToolStripMenuItem.Size = New System.Drawing.Size(240, 22)
         Me.FilterSearchResultsToolStripMenuItem.Text = "Filter Search Results"
         '
+        'RefreshFileListAfterOperationToolStripMenuItem
+        '
+        Me.RefreshFileListAfterOperationToolStripMenuItem.Checked = True
+        Me.RefreshFileListAfterOperationToolStripMenuItem.CheckOnClick = True
+        Me.RefreshFileListAfterOperationToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.RefreshFileListAfterOperationToolStripMenuItem.Name = "RefreshFileListAfterOperationToolStripMenuItem"
+        Me.RefreshFileListAfterOperationToolStripMenuItem.Size = New System.Drawing.Size(240, 22)
+        Me.RefreshFileListAfterOperationToolStripMenuItem.Text = "Refresh File List After Operation"
+        '
+        'OnlyShowSearchTreeResultsToolStripMenuItem
+        '
+        Me.OnlyShowSearchTreeResultsToolStripMenuItem.CheckOnClick = True
+        Me.OnlyShowSearchTreeResultsToolStripMenuItem.Name = "OnlyShowSearchTreeResultsToolStripMenuItem"
+        Me.OnlyShowSearchTreeResultsToolStripMenuItem.Size = New System.Drawing.Size(240, 22)
+        Me.OnlyShowSearchTreeResultsToolStripMenuItem.Text = "Only Show Search Tree Results"
+        '
         'StatusStrip1
         '
         Me.StatusStrip1.ImageScalingSize = New System.Drawing.Size(32, 32)
@@ -299,22 +315,6 @@ Partial Class Form1
         Me.StatusToolStripLabel.Name = "StatusToolStripLabel"
         Me.StatusToolStripLabel.Size = New System.Drawing.Size(43, 19)
         Me.StatusToolStripLabel.Text = "Ready"
-        '
-        'RefreshFileListAfterOperationToolStripMenuItem
-        '
-        Me.RefreshFileListAfterOperationToolStripMenuItem.Checked = True
-        Me.RefreshFileListAfterOperationToolStripMenuItem.CheckOnClick = True
-        Me.RefreshFileListAfterOperationToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.RefreshFileListAfterOperationToolStripMenuItem.Name = "RefreshFileListAfterOperationToolStripMenuItem"
-        Me.RefreshFileListAfterOperationToolStripMenuItem.Size = New System.Drawing.Size(240, 22)
-        Me.RefreshFileListAfterOperationToolStripMenuItem.Text = "Refresh File List After Operation"
-        '
-        'OnlyShowSearchTreeResultsToolStripMenuItem
-        '
-        Me.OnlyShowSearchTreeResultsToolStripMenuItem.CheckOnClick = True
-        Me.OnlyShowSearchTreeResultsToolStripMenuItem.Name = "OnlyShowSearchTreeResultsToolStripMenuItem"
-        Me.OnlyShowSearchTreeResultsToolStripMenuItem.Size = New System.Drawing.Size(240, 22)
-        Me.OnlyShowSearchTreeResultsToolStripMenuItem.Text = "Only Show Search Tree Results"
         '
         'Form1
         '
