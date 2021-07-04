@@ -45,6 +45,7 @@ Public Class Form1
     End Sub
 
     Private Sub TreeView1_NodeMouseClick(ByVal sender As Object, ByVal e As TreeNodeMouseClickEventArgs) Handles TreeView1.NodeMouseClick
+        TreeView1.SelectedNode = TreeView1.GetNodeAt(e.X, e.Y)
         GetFiles(e.Node)
     End Sub
 
@@ -344,6 +345,29 @@ Public Class Form1
                 ListView1.Items(i).Selected = True
             Next
             e.SuppressKeyPress = True
+        End If
+    End Sub
+    Private Function SaveFolderChecksums(node As TreeNode, Path As String) As String
+        Dim Checksums As String = ""
+        Dim Files As Dictionary(Of Integer, FileClass) = SQL.GetFilesChecksum(node.Tag)
+        For Each file In Files.Keys
+            Checksums += Files(file).Checksum + " *" + Path + Files(file).Name + Environment.NewLine
+        Next
+        If node.Nodes.Count > 0 Then
+            For Each tree_node As TreeNode In node.Nodes
+                Checksums += SaveFolderChecksums(tree_node, Path + tree_node.Text + "\")
+            Next
+        End If
+        Return Checksums
+    End Function
+
+    Private Sub SaveLabelContentChecksumsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveLabelContentChecksumsToolStripMenuItem.Click
+        If TreeView1.SelectedNode IsNot Nothing Then
+            Dim SaveDialog As New SaveFileDialog With {.FileName = TreeView1.SelectedNode.Text + ".md5", .Filter = "MD5 Checksum|*.md5"}
+            Dim result As MsgBoxResult = SaveDialog.ShowDialog()
+            If result = MsgBoxResult.Ok Then
+                My.Computer.FileSystem.WriteAllText(SaveDialog.FileName, SaveFolderChecksums(TreeView1.SelectedNode, TreeView1.SelectedNode.Text + "\"), False, New Text.UTF8Encoding(False))
+            End If
         End If
     End Sub
 End Class

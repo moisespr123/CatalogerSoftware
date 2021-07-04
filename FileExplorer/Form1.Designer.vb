@@ -59,6 +59,7 @@ Partial Class Form1
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.ToolStripProgressBar1 = New System.Windows.Forms.ToolStripProgressBar()
         Me.StatusToolStripLabel = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.SaveLabelContentChecksumsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
@@ -105,9 +106,9 @@ Partial Class Form1
         'ContextMenuStrip1
         '
         Me.ContextMenuStrip1.ImageScalingSize = New System.Drawing.Size(32, 32)
-        Me.ContextMenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewFolderToolStripMenuItem, Me.DeleteToolStripMenuItem, Me.RenameToolStripMenuItem, Me.CopyLabelToolStripMenuItem})
+        Me.ContextMenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewFolderToolStripMenuItem, Me.DeleteToolStripMenuItem, Me.RenameToolStripMenuItem, Me.CopyLabelToolStripMenuItem, Me.SaveLabelContentChecksumsToolStripMenuItem})
         Me.ContextMenuStrip1.Name = "ContextMenuStrip1"
-        Me.ContextMenuStrip1.Size = New System.Drawing.Size(158, 92)
+        Me.ContextMenuStrip1.Size = New System.Drawing.Size(240, 136)
         '
         'NewFolderToolStripMenuItem
         '
@@ -316,6 +317,12 @@ Partial Class Form1
         Me.StatusToolStripLabel.Size = New System.Drawing.Size(43, 19)
         Me.StatusToolStripLabel.Text = "Ready"
         '
+        'SaveLabelContentChecksumsToolStripMenuItem
+        '
+        Me.SaveLabelContentChecksumsToolStripMenuItem.Name = "SaveLabelContentChecksumsToolStripMenuItem"
+        Me.SaveLabelContentChecksumsToolStripMenuItem.Size = New System.Drawing.Size(239, 22)
+        Me.SaveLabelContentChecksumsToolStripMenuItem.Text = "Save Label Content Checksums"
+        '
         'Form1
         '
         Me.AllowDrop = True
@@ -378,4 +385,5 @@ Partial Class Form1
     Friend WithEvents FilterSearchResultsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents RefreshFileListAfterOperationToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents OnlyShowSearchTreeResultsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents SaveLabelContentChecksumsToolStripMenuItem As ToolStripMenuItem
 End Class

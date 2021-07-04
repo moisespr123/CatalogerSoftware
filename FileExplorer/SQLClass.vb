@@ -127,6 +127,22 @@ Public Class SQLClass
         Connection.Close()
         Return files
     End Function
+    Public Function GetFilesChecksum(parent As Integer) As Dictionary(Of Integer, FileClass)
+        Dim SQLQuery As String = "SELECT id, name, checksum FROM files WHERE parent=@parent ORDER BY name"
+        Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
+        Dim Command As New MySqlCommand(SQLQuery, Connection)
+        Command.Parameters.AddWithValue("@parent", parent)
+        Connection.Open()
+        Dim reader As MySqlDataReader = Command.ExecuteReader
+        Dim files As New Dictionary(Of Integer, FileClass)
+        If reader.HasRows Then
+            While reader.Read
+                files.Add(reader("id"), New FileClass(reader("name"), Nothing, Nothing, Nothing, Nothing, reader("checksum"), Nothing, Nothing, Nothing))
+            End While
+        End If
+        Connection.Close()
+        Return files
+    End Function
     Public Function GetLabels() As Dictionary(Of String, String)
         Dim SQLQuery As String = "SELECT DISTINCT vol_label, spindle FROM files ORDER BY vol_label ASC"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
