@@ -326,8 +326,10 @@ Public Class Form1
 
     Private Sub SaveChecksumsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveChecksumsToolStripMenuItem.Click
         Dim Files As ListView.SelectedIndexCollection = ListView1.SelectedIndices
-        If ListView1.SelectedIndices.Count > 0 Then
-            Dim SaveDialog As New SaveFileDialog With {.FileName = "Checksums.md5", .Filter = "MD5 Checksum|*.md5"}
+        If Files.Count > 0 Then
+            Dim MD5FileName As String = "Checksums.md5"
+            If Files.Count = 1 Then MD5FileName = CurrentFiles(ListView1.Items(Files(0)).Tag).Name + ".md5"
+            Dim SaveDialog As New SaveFileDialog With {.FileName = MD5FileName, .Filter = "MD5 Checksum|*.md5"}
             Dim result As MsgBoxResult = SaveDialog.ShowDialog()
             If result = MsgBoxResult.Ok Then
                 Dim ChecksumString As String = ""
