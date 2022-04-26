@@ -30,6 +30,7 @@ Partial Class LabelManagement
         Me.Button3 = New System.Windows.Forms.Button()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.Button4 = New System.Windows.Forms.Button()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
@@ -108,6 +109,7 @@ Partial Class LabelManagement
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.Button4)
         Me.Panel1.Controls.Add(Me.Button1)
         Me.Panel1.Controls.Add(Me.Button3)
         Me.Panel1.Controls.Add(Me.Button2)
@@ -116,6 +118,15 @@ Partial Class LabelManagement
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(171, 375)
         Me.Panel1.TabIndex = 0
+        '
+        'Button4
+        '
+        Me.Button4.Location = New System.Drawing.Point(21, 100)
+        Me.Button4.Name = "Button4"
+        Me.Button4.Size = New System.Drawing.Size(131, 23)
+        Me.Button4.TabIndex = 4
+        Me.Button4.Text = "Save Label Content Checksums"
+        Me.Button4.UseVisualStyleBackColor = True
         '
         'LabelManagement
         '
@@ -142,4 +153,5 @@ Partial Class LabelManagement
     Friend WithEvents Button3 As Button
     Friend WithEvents SplitContainer1 As SplitContainer
     Friend WithEvents Panel1 As Panel
+    Friend WithEvents Button4 As Button
 End Class

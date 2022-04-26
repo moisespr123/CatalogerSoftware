@@ -43,4 +43,25 @@
             Form1.SearchFunction(Form1.SQL.GetLabelContents(ListView1.Items(Label(0)).Text), ListView1.Items(Label(0)).Text)
         End If
     End Sub
+
+    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+        Dim DriveLetterToUse = InputBox("Enter the Drive Letter to use to check the checksums")
+        Dim Label As ListView.SelectedIndexCollection = ListView1.SelectedIndices
+        If ListView1.SelectedIndices.Count > 0 Then
+            Dim MD5FileName As String = ListView1.Items(ListView1.SelectedIndices(0)).Text + ".md5"
+            Dim SaveDialog As New SaveFileDialog With {.FileName = MD5FileName, .Filter = "MD5 Checksum|*.md5"}
+            Dim result As MsgBoxResult = SaveDialog.ShowDialog()
+            If result = MsgBoxResult.Ok Then
+                Dim Files As Dictionary(Of Integer, FileClass) = Form1.SQL.GetLabelContents(ListView1.Items(Label(0)).Text)
+                Dim ChecksumString As String = ""
+                For Each file In Files.Keys
+                    Dim Path As String() = Files(file).OriginalPath.Split(":")
+                    Dim NewPath As String = Path(0).Replace(Path(0), DriveLetterToUse.Chars(0)) + ":" + Path(1)
+                    ChecksumString = ChecksumString + Files(file).Checksum + " *" + NewPath + Environment.NewLine
+                Next
+                My.Computer.FileSystem.WriteAllText(SaveDialog.FileName, ChecksumString, False, New Text.UTF8Encoding(False))
+            End If
+            MsgBox("Label Content Checksums saved.")
+        End If
+    End Sub
 End Class
