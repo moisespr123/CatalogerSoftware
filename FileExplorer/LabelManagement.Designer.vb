@@ -25,11 +25,13 @@ Partial Class LabelManagement
         Me.ListView1 = New System.Windows.Forms.ListView()
         Me.ColumnHeader1 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader2 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader3 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Button2 = New System.Windows.Forms.Button()
         Me.Button3 = New System.Windows.Forms.Button()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.Button5 = New System.Windows.Forms.Button()
         Me.Button4 = New System.Windows.Forms.Button()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
@@ -40,7 +42,7 @@ Partial Class LabelManagement
         '
         'ListView1
         '
-        Me.ListView1.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader1, Me.ColumnHeader2})
+        Me.ListView1.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader1, Me.ColumnHeader2, Me.ColumnHeader3})
         Me.ListView1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.ListView1.HideSelection = False
         Me.ListView1.Location = New System.Drawing.Point(0, 0)
@@ -59,6 +61,11 @@ Partial Class LabelManagement
         '
         Me.ColumnHeader2.Text = "Spindle"
         Me.ColumnHeader2.Width = 71
+        '
+        'ColumnHeader3
+        '
+        Me.ColumnHeader3.Text = "Last Checked"
+        Me.ColumnHeader3.Width = 134
         '
         'Button1
         '
@@ -83,6 +90,7 @@ Partial Class LabelManagement
         'Button3
         '
         Me.Button3.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Button3.Enabled = False
         Me.Button3.Location = New System.Drawing.Point(21, 70)
         Me.Button3.Name = "Button3"
         Me.Button3.Size = New System.Drawing.Size(138, 23)
@@ -109,6 +117,7 @@ Partial Class LabelManagement
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.Button5)
         Me.Panel1.Controls.Add(Me.Button4)
         Me.Panel1.Controls.Add(Me.Button1)
         Me.Panel1.Controls.Add(Me.Button3)
@@ -119,11 +128,20 @@ Partial Class LabelManagement
         Me.Panel1.Size = New System.Drawing.Size(171, 375)
         Me.Panel1.TabIndex = 0
         '
+        'Button5
+        '
+        Me.Button5.Location = New System.Drawing.Point(21, 144)
+        Me.Button5.Name = "Button5"
+        Me.Button5.Size = New System.Drawing.Size(138, 37)
+        Me.Button5.TabIndex = 5
+        Me.Button5.Text = "Verify Label Content Checksums"
+        Me.Button5.UseVisualStyleBackColor = True
+        '
         'Button4
         '
         Me.Button4.Location = New System.Drawing.Point(21, 100)
         Me.Button4.Name = "Button4"
-        Me.Button4.Size = New System.Drawing.Size(131, 23)
+        Me.Button4.Size = New System.Drawing.Size(138, 38)
         Me.Button4.TabIndex = 4
         Me.Button4.Text = "Save Label Content Checksums"
         Me.Button4.UseVisualStyleBackColor = True
@@ -154,4 +172,6 @@ Partial Class LabelManagement
     Friend WithEvents SplitContainer1 As SplitContainer
     Friend WithEvents Panel1 As Panel
     Friend WithEvents Button4 As Button
+    Friend WithEvents ColumnHeader3 As ColumnHeader
+    Friend WithEvents Button5 As Button
 End Class

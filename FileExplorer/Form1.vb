@@ -28,8 +28,11 @@ Public Class Form1
         ListView1.ListViewItemSorter = lvwColumnSorter
         Dim rootfolder As Dictionary(Of String, Integer) = SQL.GetFolders(0)
         If rootfolder.Count = 0 Then
-            CreateFolder(0, String.Empty, True)
-            Initialize()
+            If CreateFolder(0, String.Empty, True) <> -1 Then
+                Initialize()
+            Else
+                Close()
+            End If
         End If
         If rootfolder.Count > 0 Then
             Dim rootNode As TreeNode
@@ -84,22 +87,27 @@ Public Class Form1
         thread.Start()
 
     End Sub
-    Private Sub AddFile(path As String, parent As Integer, VolumeLabel As String, files As Dictionary(Of String, FileClass))
+
+    Public Function VerifyChecksum(Path) As String
+        Dim MD5Hash As MD5 = MD5.Create
+        Dim MD5HashToString As String = ""
+        Dim file As New FileStream(Path, FileMode.Open, FileAccess.Read)
+        MD5Hash.ComputeHash(file)
+        For Each b In MD5Hash.Hash
+            MD5HashToString += b.ToString("x2")
+        Next
+        file.Close()
+        Return MD5HashToString
+    End Function
+    Private Sub AddFile(path As String, parent As Integer, LabelId As String, files As Dictionary(Of String, FileClass))
         Dim Filename As String = IO.Path.GetFileName(path)
         If Not files.Keys.Contains(IO.Path.GetFileName(path)) Then
             StatusStrip1.BeginInvoke(Sub()
                                          ToolStripProgressBar1.Style = ProgressBarStyle.Marquee
                                          StatusToolStripLabel.Text = "Adding file: " + path
                                      End Sub)
-            Dim MD5Hash As MD5 = MD5.Create
-            Dim MD5HashToString As String = ""
-            Dim file As New FileStream(path, FileMode.Open, FileAccess.Read)
-            MD5Hash.ComputeHash(file)
-            For Each b In MD5Hash.Hash
-                MD5HashToString += b.ToString("x2")
-            Next
-            file.Close()
-            SQL.InsertFile(Filename, parent, VolumeLabel, MD5HashToString, IO.Path.GetExtension(path), IO.File.GetLastWriteTimeUtc(path), My.Computer.FileSystem.GetFileInfo(path).Length / 1024, path)
+            Dim MD5HashToString = VerifyChecksum(path)
+            SQL.InsertFile(Filename, parent, LabelId, MD5HashToString, IO.Path.GetExtension(path), IO.File.GetLastWriteTimeUtc(path), My.Computer.FileSystem.GetFileInfo(path).Length / 1024, path)
         End If
     End Sub
     Private Sub RefreshListAfterAddingFiles()
@@ -111,15 +119,15 @@ Public Class Form1
             End If
         End If
     End Sub
-    Private Sub GetDirectoriesAndFiles(ByVal BaseFolder As DirectoryInfo, parent As Integer, VolumeLabel As String, node As TreeNode, files As Dictionary(Of String, FileClass))
+    Private Sub GetDirectoriesAndFiles(ByVal BaseFolder As DirectoryInfo, parent As Integer, LabelId As String, node As TreeNode, files As Dictionary(Of String, FileClass))
         For Each FI As FileInfo In BaseFolder.GetFiles()
-            AddFile(FI.FullName, parent, VolumeLabel, files)
+            AddFile(FI.FullName, parent, LabelId, files)
             RefreshListAfterAddingFiles()
         Next
         For Each subF As DirectoryInfo In BaseFolder.GetDirectories()
             Dim CreatedFolderId As Integer = CreateFolder(parent, subF.Name)
             GetFolders(node.Tag, node)
-            GetDirectoriesAndFiles(subF, CreatedFolderId, VolumeLabel, node, SQL.GetFilesNameAsKey(CreatedFolderId))
+            GetDirectoriesAndFiles(subF, CreatedFolderId, LabelId, node, SQL.GetFilesNameAsKey(CreatedFolderId))
         Next
     End Sub
 
@@ -128,6 +136,10 @@ Public Class Form1
         If String.IsNullOrWhiteSpace(VolumeLabel) Then
             Return
         End If
+        Dim LabelId = SQL.CheckLabelExists(VolumeLabel)
+        If LabelId < 0 Then
+            LabelId = SQL.InsertLabel(VolumeLabel).ToString()
+        End If
         StatusStrip1.BeginInvoke(Sub()
                                      ToolStripProgressBar1.Style = ProgressBarStyle.Marquee
                                      StatusToolStripLabel.Text = "Adding files"
@@ -135,12 +147,12 @@ Public Class Form1
         For Each path In filepath
             Dim files As Dictionary(Of String, FileClass) = SQL.GetFilesNameAsKey(node.Tag)
             If File.Exists(path) Then
-                AddFile(path, node.Tag, VolumeLabel, files)
+                AddFile(path, node.Tag, LabelId, files)
                 RefreshListAfterAddingFiles()
             Else
                 Dim CreatedFolderId As Integer = CreateFolder(node.Tag, IO.Path.GetFileName(path))
                 GetFolders(node.Tag, node)
-                GetDirectoriesAndFiles(New DirectoryInfo(path), CreatedFolderId, VolumeLabel, node, SQL.GetFilesNameAsKey(CreatedFolderId))
+                GetDirectoriesAndFiles(New DirectoryInfo(path), CreatedFolderId, LabelId, node, SQL.GetFilesNameAsKey(CreatedFolderId))
             End If
         Next
         GetFolders(node.Tag, node)
@@ -165,11 +177,14 @@ Public Class Form1
                 name = InputBox("Enter a name for the folder")
             End If
         End If
-        If Folders.Keys.Contains(name) Then
-            Return Folders(name)
-        Else
-            Return SQL.InsertFolder(name, parent)
+        If Not String.IsNullOrWhiteSpace(name) Then
+            If Folders.Keys.Contains(name) Then
+                Return Folders(name)
+            Else
+                Return SQL.InsertFolder(name, parent)
+            End If
         End If
+        Return -1
     End Function
 
     Private Function DeleteFolder(node As TreeNode)

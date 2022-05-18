@@ -22,3 +22,15 @@ Public Class FileClass
         Spindle = file_spindle
     End Sub
 End Class
+
+Public Class LabelClass
+    Public Name As String = String.Empty
+    Public Spindle As String = String.Empty
+    Public LastChecked As Date = Date.MinValue
+
+    Public Sub New(label_name As String, label_spindle As String, last_checked As Date)
+        Name = label_name
+        Spindle = label_spindle
+        LastChecked = last_checked
+    End Sub
+End Class

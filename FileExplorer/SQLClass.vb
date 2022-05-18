@@ -3,7 +3,7 @@ Imports MySql.Data.MySqlClient
 Public Class SQLClass
     Private ReadOnly MySQLString As String = ""
     Public Sub New()
-        If IO.File.Exists("Config.txt") Then
+        If File.Exists("Config.txt") Then
             Dim ConfigFile As StreamReader = New StreamReader("Config.txt")
             Dim currentline As String
             Dim MySQLServer As String = String.Empty
@@ -112,7 +112,8 @@ Public Class SQLClass
         Return result
     End Function
     Public Function GetFiles(parent As Integer) As Dictionary(Of Integer, FileClass)
-        Dim SQLQuery As String = "SELECT id, name, vol_label, checksum, type, file_size, mod_date, orig_path, comment, spindle FROM files WHERE parent=@parent ORDER BY name"
+        Dim SQLQuery As String = "SELECT files.id, files.name as file_name, labels.name as vol_label, checksum, type, file_size, mod_date, orig_path, comment, spindle, last_checked FROM files 
+                                  INNER JOIN labels ON labels.id = files.vol_label WHERE parent=@parent ORDER BY file_name"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
         Dim Command As New MySqlCommand(SQLQuery, Connection)
         Command.Parameters.AddWithValue("@parent", parent)
@@ -121,7 +122,7 @@ Public Class SQLClass
         Dim files As New Dictionary(Of Integer, FileClass)
         If reader.HasRows Then
             While reader.Read
-                files.Add(reader("id"), New FileClass(reader("name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment").ToString(), reader("spindle").ToString()))
+                files.Add(reader("id"), New FileClass(reader("file_name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment").ToString(), reader("spindle").ToString()))
             End While
         End If
         Connection.Close()
@@ -143,23 +144,45 @@ Public Class SQLClass
         Connection.Close()
         Return files
     End Function
-    Public Function GetLabels() As Dictionary(Of String, String)
-        Dim SQLQuery As String = "SELECT DISTINCT vol_label, spindle FROM files ORDER BY vol_label ASC"
+    Public Function GetLabels() As Dictionary(Of Integer, LabelClass)
+        Dim SQLQuery As String = "SELECT id, name, spindle, last_checked FROM labels ORDER BY name ASC"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
         Dim Command As New MySqlCommand(SQLQuery, Connection)
         Connection.Open()
         Dim reader As MySqlDataReader = Command.ExecuteReader
-        Dim labels As New Dictionary(Of String, String)
+        Dim labels As New Dictionary(Of Integer, LabelClass)
         If reader.HasRows Then
             While reader.Read
-                labels.Add(reader("vol_label"), reader("spindle").ToString())
+                Dim LastChecked As Date = Date.MinValue
+                If Not IsDBNull(reader("last_checked")) Then
+                    LastChecked = reader("last_checked")
+                End If
+                labels.Add(reader("id"), New LabelClass(reader("name"), reader("spindle").ToString(), LastChecked))
             End While
         End If
         Connection.Close()
         Return labels
     End Function
+
+    Public Function CheckLabelExists(Label As String) As Integer
+        Dim SQLQuery As String = "SELECT id FROM labels WHERE name=@name"
+        Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
+        Dim Command As New MySqlCommand(SQLQuery, Connection)
+        Command.Parameters.AddWithValue("@name", Label)
+        Connection.Open()
+        Dim reader As MySqlDataReader = Command.ExecuteReader
+        Dim LabelId As Integer = -1
+        If reader.HasRows Then
+            reader.Read()
+            LabelId = reader("id")
+        End If
+        Connection.Close()
+        Return LabelId
+    End Function
+
     Public Function GetFilesNameAsKey(parent As Integer) As Dictionary(Of String, FileClass)
-        Dim SQLQuery As String = "SELECT id, name, vol_label, checksum, type, file_size, mod_date, orig_path, comment, spindle FROM files WHERE parent=@parent ORDER BY name"
+        Dim SQLQuery As String = "SELECT files.id, files.name as file_name, labels.name as vol_label, checksum, type, file_size, mod_date, orig_path, comment, spindle, last_checked FROM files 
+                                  INNER JOIN fileexplorertool.labels ON labels.id = files.vol_label WHERE parent=@parent ORDER BY file_name"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
         Dim Command As New MySqlCommand(SQLQuery, Connection)
         Command.Parameters.AddWithValue("@parent", parent)
@@ -168,14 +191,15 @@ Public Class SQLClass
         Dim files As New Dictionary(Of String, FileClass)
         If reader.HasRows Then
             While reader.Read
-                files.Add(reader("name"), New FileClass(reader("name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment").ToString(), reader("spindle").ToString()))
+                files.Add(reader("file_name"), New FileClass(reader("file_name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment").ToString(), reader("spindle").ToString()))
             End While
         End If
         Connection.Close()
         Return files
     End Function
     Public Function GetFileNameAsKey(parent As Integer, name As String) As Dictionary(Of String, FileClass)
-        Dim SQLQuery As String = "SELECT id, name, vol_label, checksum, type, file_size, mod_date, orig_path, comment, spindle FROM files WHERE parent=@parent AND name=@name ORDER BY name"
+        Dim SQLQuery As String = "SELECT files.id, files.name as file_name, labels.name as vol_label, checksum, type, file_size, mod_date, orig_path, comment, spindle, last_checked FROM files 
+                                  INNER JOIN fileexplorertool.labels ON labels.id = files.vol_label WHERE parent=@parent AND file_name=@name ORDER BY file_name"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
         Dim Command As New MySqlCommand(SQLQuery, Connection)
         Command.Parameters.AddWithValue("@parent", parent)
@@ -185,7 +209,7 @@ Public Class SQLClass
         Dim files As New Dictionary(Of String, FileClass)
         If reader.HasRows Then
             While reader.Read
-                files.Add(reader("name"), New FileClass(reader("name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment").ToString(), reader("spindle").ToString()))
+                files.Add(reader("name"), New FileClass(reader("file_name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment").ToString(), reader("spindle").ToString()))
             End While
         End If
         Connection.Close()
@@ -197,6 +221,18 @@ Public Class SQLClass
         Dim Command As New MySqlCommand(SQLQuery, Connection)
         Command.Parameters.AddWithValue("@name", name)
         Command.Parameters.AddWithValue("@parent", parent)
+        Connection.Open()
+        Command.ExecuteNonQuery()
+        Dim id As Integer = Command.LastInsertedId
+        Connection.Close()
+        Return id
+    End Function
+
+    Public Function InsertLabel(name As String) As Integer
+        Dim SQLQuery As String = "INSERT INTO labels (name) VALUES (@name)"
+        Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
+        Dim Command As New MySqlCommand(SQLQuery, Connection)
+        Command.Parameters.AddWithValue("@name", name)
         Connection.Open()
         Command.ExecuteNonQuery()
         Dim id As Integer = Command.LastInsertedId
@@ -224,7 +260,9 @@ Public Class SQLClass
     End Function
 
     Public Function SearchFiles(searchString As String) As Dictionary(Of Integer, FileClass)
-        Dim SQLQuery As String = "SELECT id, name, vol_label, checksum, type, file_size, mod_date, orig_path, comment, spindle FROM files WHERE name LIKE @searchstring OR vol_label LIKE @searchstring OR orig_path LIKE @searchstring OR comment LIKE @searchstring ORDER BY name"
+        Dim SQLQuery As String = "SELECT files.id, files.name as file_name, labels.name as vol_label, checksum, type, file_size, mod_date, orig_path, comment, spindle, last_checked FROM files 
+                                  INNER JOIN fileexplorertool.labels ON labels.id = files.vol_label 
+                                  WHERE file_name LIKE @searchstring OR vol_label LIKE @searchstring OR orig_path LIKE @searchstring OR comment LIKE @searchstring ORDER BY file_name"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
         Dim Command As New MySqlCommand(SQLQuery, Connection)
         Command.Parameters.AddWithValue("@searchstring", "%" + searchString + "%")
@@ -233,7 +271,7 @@ Public Class SQLClass
         Dim files As New Dictionary(Of Integer, FileClass)
         If reader.HasRows Then
             While reader.Read
-                files.Add(reader("id"), New FileClass(reader("name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment").ToString(), reader("spindle").ToString()))
+                files.Add(reader("id"), New FileClass(reader("file_name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment").ToString(), reader("spindle").ToString()))
             End While
         End If
         Connection.Close()
@@ -241,7 +279,8 @@ Public Class SQLClass
     End Function
 
     Public Function GetLabelContents(Label As String) As Dictionary(Of Integer, FileClass)
-        Dim SQLQuery As String = "SELECT id, name, vol_label, checksum, type, file_size, mod_date, orig_path, comment, spindle FROM files WHERE vol_label=@label"
+        Dim SQLQuery As String = "SELECT files.id, files.name as file_name, labels.name as vol_label, checksum, type, file_size, mod_date, orig_path, comment, spindle, last_checked FROM files 
+                                  INNER JOIN fileexplorertool.labels ON labels.id = files.vol_label WHERE labels.name=@label"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
         Dim Command As New MySqlCommand(SQLQuery, Connection)
         Command.Parameters.AddWithValue("@label", Label)
@@ -250,7 +289,7 @@ Public Class SQLClass
         Dim files As New Dictionary(Of Integer, FileClass)
         If reader.HasRows Then
             While reader.Read
-                files.Add(reader("id"), New FileClass(reader("name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment").ToString(), reader("spindle").ToString()))
+                files.Add(reader("id"), New FileClass(reader("file_name"), reader("type"), reader("mod_date"), reader("file_size"), reader("vol_label"), reader("checksum"), reader("orig_path"), reader("comment").ToString(), reader("spindle").ToString()))
             End While
         End If
         Connection.Close()
@@ -269,7 +308,7 @@ Public Class SQLClass
         Return result
     End Function
     Public Function UpdateSpindle(label As String, spindle As String) As Integer
-        Dim SQLQuery As String = "UPDATE files SET spindle=@spindle WHERE vol_label=@label"
+        Dim SQLQuery As String = "UPDATE labels SET spindle=@spindle WHERE name=@label"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
         Dim Command As New MySqlCommand(SQLQuery, Connection)
         Command.Parameters.AddWithValue("@spindle", spindle)
@@ -280,8 +319,20 @@ Public Class SQLClass
         Return result
     End Function
 
+    Public Function UpdateLastChecked(label As String, NewDate As Date) As Integer
+        Dim SQLQuery As String = "UPDATE labels SET last_checked=@checked_date WHERE name=@label"
+        Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
+        Dim Command As New MySqlCommand(SQLQuery, Connection)
+        Command.Parameters.AddWithValue("@checked_date", NewDate)
+        Command.Parameters.AddWithValue("@label", label)
+        Connection.Open()
+        Dim result As Integer = Command.ExecuteNonQuery()
+        Connection.Close()
+        Return result
+    End Function
+
     Public Function UpdateLabel(label As String, new_label As String) As Integer
-        Dim SQLQuery As String = "UPDATE files SET vol_label=@new_label WHERE vol_label=@label"
+        Dim SQLQuery As String = "UPDATE labels SET name=@new_label WHERE name=@label"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
         Dim Command As New MySqlCommand(SQLQuery, Connection)
         Command.Parameters.AddWithValue("@label", label)

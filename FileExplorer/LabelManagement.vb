@@ -4,11 +4,12 @@
         PopulateListView()
     End Sub
     Private Sub PopulateListView()
-        Dim Labels As Dictionary(Of String, String) = Form1.SQL.GetLabels()
+        Dim Labels As Dictionary(Of Integer, LabelClass) = Form1.SQL.GetLabels()
         ListView1.Items.Clear()
         For Each label As String In Labels.Keys
-            Dim item As ListViewItem = New ListViewItem(label)
-            Dim subItems As ListViewItem.ListViewSubItem() = New ListViewItem.ListViewSubItem() {New ListViewItem.ListViewSubItem(item, Labels(label))}
+            Dim item As ListViewItem = New ListViewItem(Labels(label).Name)
+            Dim subItems As ListViewItem.ListViewSubItem() = New ListViewItem.ListViewSubItem() {New ListViewItem.ListViewSubItem(item, Labels(label).Spindle),
+                                                                                                 New ListViewItem.ListViewSubItem(item, Labels(label).LastChecked.ToString("G"))}
             item.SubItems.AddRange(subItems)
             ListView1.Items.Add(item)
         Next
@@ -21,7 +22,7 @@
             Dim Spindle As String = InputBox("Enter the Spindle Name/Number for the selected label", , ListView1.Items(Label(0)).SubItems(1).Text)
             If Not String.IsNullOrEmpty(Spindle) Then
                 Form1.SQL.UpdateSpindle(ListView1.Items(Label(0)).Text, Spindle)
-                PopulateListView()
+                ListView1.Items(Label(0)).SubItems(1).Text = Spindle
             End If
         End If
     End Sub
@@ -56,12 +57,46 @@
                 Dim ChecksumString As String = ""
                 For Each file In Files.Keys
                     Dim Path As String() = Files(file).OriginalPath.Split(":")
-                    Dim NewPath As String = Path(0).Replace(Path(0), DriveLetterToUse.Chars(0)) + ":" + Path(1)
+                    Dim NewPath As String = Path(0).Replace(Path(0), DriveLetterToUse.Chars(0).ToString().ToUpper()) + ":" + Path(1)
                     ChecksumString = ChecksumString + Files(file).Checksum + " *" + NewPath + Environment.NewLine
                 Next
                 My.Computer.FileSystem.WriteAllText(SaveDialog.FileName, ChecksumString, False, New Text.UTF8Encoding(False))
+                MsgBox("Label Content Checksums saved.")
             End If
-            MsgBox("Label Content Checksums saved.")
+        End If
+    End Sub
+
+    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+        MsgBox("Not implemented")
+    End Sub
+
+    Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+        Dim DriveLetterToUse = InputBox("Enter the Drive Letter to use to check the checksums")
+        Dim Label As ListView.SelectedIndexCollection = ListView1.SelectedIndices
+        Dim CC As New ChecksumChecker
+        CC.CurrentLabel = ListView1.Items(Label(0)).Text
+        If ListView1.SelectedIndices.Count > 0 Then
+            Dim Files As Dictionary(Of Integer, FileClass) = Form1.SQL.GetLabelContents(CC.CurrentLabel)
+            Dim ChecksumString As String = ""
+            For Each file In Files.Keys
+                Dim Path As String() = Files(file).OriginalPath.Split(":")
+                Dim NewPath As String = Path(0).Replace(Path(0), DriveLetterToUse.Chars(0).ToString().ToUpper()) + ":" + Path(1)
+                ChecksumString = ChecksumString + Files(file).Checksum + " *" + NewPath + Environment.NewLine
+                Dim item As ListViewItem = New ListViewItem(NewPath)
+                Dim subItems As ListViewItem.ListViewSubItem() = New ListViewItem.ListViewSubItem() {New ListViewItem.ListViewSubItem(item, String.Format("{0:N2} KB", Files(file).FileSize)),
+                                                                                                     New ListViewItem.ListViewSubItem(item, ""),
+                                                                                                     New ListViewItem.ListViewSubItem(item, Files(file).Checksum),
+                                                                                                     New ListViewItem.ListViewSubItem(item, "")}
+                item.SubItems.AddRange(subItems)
+                CC.ListView1.Items.Add(item)
+            Next
+            CC.Show()
+        End If
+    End Sub
+
+    Private Sub ListView1_KeyUp(sender As Object, e As KeyEventArgs) Handles ListView1.KeyUp
+        If e.KeyCode = Keys.F5 Then
+            PopulateListView()
         End If
     End Sub
 End Class

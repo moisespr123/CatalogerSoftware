@@ -123,7 +123,13 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileClass.vb" />
+    <Compile Include="ChecksumChecker.Designer.vb">
+      <DependentUpon>ChecksumChecker.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ChecksumChecker.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Classes.vb" />
     <Compile Include="Form1.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -156,6 +162,9 @@
     <Compile Include="SQLClass.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ChecksumChecker.resx">
+      <DependentUpon>ChecksumChecker.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.vb</DependentUpon>
     </EmbeddedResource>
