@@ -27,10 +27,16 @@ Public Class LabelClass
     Public Name As String = String.Empty
     Public Spindle As String = String.Empty
     Public LastChecked As Date = Date.MinValue
+    Public CheckOutcome As String = "Not Verified"
 
-    Public Sub New(label_name As String, label_spindle As String, last_checked As Date)
+    Public Sub New(label_name As String, label_spindle As String, last_checked As Date, outcome As Integer)
         Name = label_name
         Spindle = label_spindle
         LastChecked = last_checked
+        If outcome = 1 Then
+            CheckOutcome = "OK"
+        ElseIf outcome = 2 Then
+            CheckOutcome = "Errors found"
+        End If
     End Sub
 End Class

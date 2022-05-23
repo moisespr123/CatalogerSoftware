@@ -2,6 +2,7 @@
     Public CurrentLabel As String = ""
     Private Sub Verification(Items, UpdateCheckDate)
         Dim Counter As Integer = 0
+        Dim GoodCounter As Integer = 0
         For Each file As ListViewItem In Items
             Try
                 Dim hash As String = Form1.VerifyChecksum(file.SubItems(0).Text)
@@ -11,6 +12,7 @@
                                               file.SubItems(2).Text = "MATCH"
                                               file.SubItems(2).BackColor = Color.LimeGreen
                                           End Sub)
+                    GoodCounter += 1
                 Else
                     ListView1.BeginInvoke(Sub()
                                               file.UseItemStyleForSubItems = False
@@ -36,9 +38,13 @@
                                End Sub)
         Next
         If UpdateCheckDate Then
-            Form1.SQL.UpdateLastChecked(CurrentLabel, Date.Now)
+            Dim Outcome As Integer = 2
+            If GoodCounter = Counter Then
+                Outcome = 1
+            End If
+            Form1.SQL.UpdateLastChecked(CurrentLabel, Date.Now, Outcome)
         End If
-        Button1.BeginInvoke(Sub() Button1.Enabled = True)
+            Button1.BeginInvoke(Sub() Button1.Enabled = True)
         MsgBox("Done")
 
     End Sub

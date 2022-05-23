@@ -145,7 +145,7 @@ Public Class SQLClass
         Return files
     End Function
     Public Function GetLabels() As Dictionary(Of Integer, LabelClass)
-        Dim SQLQuery As String = "SELECT id, name, spindle, last_checked FROM labels ORDER BY name ASC"
+        Dim SQLQuery As String = "SELECT id, name, spindle, last_checked, outcome FROM labels ORDER BY name ASC"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
         Dim Command As New MySqlCommand(SQLQuery, Connection)
         Connection.Open()
@@ -157,7 +157,7 @@ Public Class SQLClass
                 If Not IsDBNull(reader("last_checked")) Then
                     LastChecked = reader("last_checked")
                 End If
-                labels.Add(reader("id"), New LabelClass(reader("name"), reader("spindle").ToString(), LastChecked))
+                labels.Add(reader("id"), New LabelClass(reader("name"), reader("spindle").ToString(), LastChecked, reader("outcome")))
             End While
         End If
         Connection.Close()
@@ -319,11 +319,12 @@ Public Class SQLClass
         Return result
     End Function
 
-    Public Function UpdateLastChecked(label As String, NewDate As Date) As Integer
-        Dim SQLQuery As String = "UPDATE labels SET last_checked=@checked_date WHERE name=@label"
+    Public Function UpdateLastChecked(label As String, NewDate As Date, Outcome As Integer) As Integer
+        Dim SQLQuery As String = "UPDATE labels SET last_checked=@checked_date, outcome=@outcome WHERE name=@label"
         Dim Connection As MySqlConnection = New MySqlConnection(MySQLString)
         Dim Command As New MySqlCommand(SQLQuery, Connection)
         Command.Parameters.AddWithValue("@checked_date", NewDate)
+        Command.Parameters.AddWithValue("@outcome", Outcome)
         Command.Parameters.AddWithValue("@label", label)
         Connection.Open()
         Dim result As Integer = Command.ExecuteNonQuery()

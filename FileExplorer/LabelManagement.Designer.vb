@@ -33,6 +33,7 @@ Partial Class LabelManagement
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.Button5 = New System.Windows.Forms.Button()
         Me.Button4 = New System.Windows.Forms.Button()
+        Me.ColumnHeader4 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
@@ -42,7 +43,7 @@ Partial Class LabelManagement
         '
         'ListView1
         '
-        Me.ListView1.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader1, Me.ColumnHeader2, Me.ColumnHeader3})
+        Me.ListView1.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader1, Me.ColumnHeader2, Me.ColumnHeader3, Me.ColumnHeader4})
         Me.ListView1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.ListView1.HideSelection = False
         Me.ListView1.Location = New System.Drawing.Point(0, 0)
@@ -146,6 +147,11 @@ Partial Class LabelManagement
         Me.Button4.Text = "Save Label Content Checksums"
         Me.Button4.UseVisualStyleBackColor = True
         '
+        'ColumnHeader4
+        '
+        Me.ColumnHeader4.Text = "Last Outcome"
+        Me.ColumnHeader4.Width = 121
+        '
         'LabelManagement
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -174,4 +180,5 @@ Partial Class LabelManagement
     Friend WithEvents Button4 As Button
     Friend WithEvents ColumnHeader3 As ColumnHeader
     Friend WithEvents Button5 As Button
+    Friend WithEvents ColumnHeader4 As ColumnHeader
 End Class
