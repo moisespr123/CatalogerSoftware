@@ -1,6 +1,8 @@
 ﻿Public Class LabelManagement
-
+    Private lvwColumnSorter As ListViewColumnSorter
     Private Sub LabelManagement_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        lvwColumnSorter = New ListViewColumnSorter()
+        ListView1.ListViewItemSorter = lvwColumnSorter
         PopulateListView()
     End Sub
     Private Sub PopulateListView()
@@ -78,15 +80,16 @@
         If Not String.IsNullOrWhiteSpace(DriveLetterToUse) Then
             Dim Label As ListView.SelectedIndexCollection = ListView1.SelectedIndices
             Dim CC As New ChecksumChecker
-            CC.CurrentLabel = ListView1.Items(Label(0)).Text
             If ListView1.SelectedIndices.Count > 0 Then
+                CC.CurrentLabel = ListView1.Items(Label(0)).Text
                 Dim Files As Dictionary(Of Integer, FileClass) = Form1.SQL.GetLabelContents(CC.CurrentLabel)
                 Dim ChecksumString As String = ""
-                For Each file In Files.Keys
+                For Each file As Integer In Files.Keys
                     Dim Path As String() = Files(file).OriginalPath.Split(":")
                     Dim NewPath As String = Path(0).Replace(Path(0), DriveLetterToUse.Chars(0).ToString().ToUpper()) + ":" + Path(1)
                     ChecksumString = ChecksumString + Files(file).Checksum + " *" + NewPath + Environment.NewLine
                     Dim item As ListViewItem = New ListViewItem(NewPath)
+                    item.Tag = file
                     Dim subItems As ListViewItem.ListViewSubItem() = New ListViewItem.ListViewSubItem() {New ListViewItem.ListViewSubItem(item, String.Format("{0:N2} KB", Files(file).FileSize)),
                                                                                                          New ListViewItem.ListViewSubItem(item, ""),
                                                                                                          New ListViewItem.ListViewSubItem(item, Files(file).Checksum),
@@ -103,5 +106,19 @@
         If e.KeyCode = Keys.F5 Then
             PopulateListView()
         End If
+    End Sub
+
+    Private Sub ListView1_ColumnClick(sender As Object, e As ColumnClickEventArgs) Handles ListView1.ColumnClick
+        If e.Column = lvwColumnSorter.SortColumn Then
+            If lvwColumnSorter.Order = SortOrder.Ascending Then
+                lvwColumnSorter.Order = SortOrder.Descending
+            Else
+                lvwColumnSorter.Order = SortOrder.Ascending
+            End If
+        Else
+            lvwColumnSorter.SortColumn = e.Column
+            lvwColumnSorter.Order = SortOrder.Ascending
+        End If
+        ListView1.Sort()
     End Sub
 End Class

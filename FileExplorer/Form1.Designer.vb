@@ -30,6 +30,7 @@ Partial Class Form1
         Me.DeleteToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.RenameToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.CopyLabelToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SaveLabelContentChecksumsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ImageList1 = New System.Windows.Forms.ImageList(Me.components)
         Me.ListView1 = New System.Windows.Forms.ListView()
         Me.ColumnHeader1 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
@@ -59,7 +60,8 @@ Partial Class Form1
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.ToolStripProgressBar1 = New System.Windows.Forms.ToolStripProgressBar()
         Me.StatusToolStripLabel = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.SaveLabelContentChecksumsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ColumnHeader10 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader11 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
@@ -108,31 +110,37 @@ Partial Class Form1
         Me.ContextMenuStrip1.ImageScalingSize = New System.Drawing.Size(32, 32)
         Me.ContextMenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewFolderToolStripMenuItem, Me.DeleteToolStripMenuItem, Me.RenameToolStripMenuItem, Me.CopyLabelToolStripMenuItem, Me.SaveLabelContentChecksumsToolStripMenuItem})
         Me.ContextMenuStrip1.Name = "ContextMenuStrip1"
-        Me.ContextMenuStrip1.Size = New System.Drawing.Size(240, 136)
+        Me.ContextMenuStrip1.Size = New System.Drawing.Size(240, 114)
         '
         'NewFolderToolStripMenuItem
         '
         Me.NewFolderToolStripMenuItem.Name = "NewFolderToolStripMenuItem"
-        Me.NewFolderToolStripMenuItem.Size = New System.Drawing.Size(157, 22)
+        Me.NewFolderToolStripMenuItem.Size = New System.Drawing.Size(239, 22)
         Me.NewFolderToolStripMenuItem.Text = "New Folder"
         '
         'DeleteToolStripMenuItem
         '
         Me.DeleteToolStripMenuItem.Name = "DeleteToolStripMenuItem"
-        Me.DeleteToolStripMenuItem.Size = New System.Drawing.Size(157, 22)
+        Me.DeleteToolStripMenuItem.Size = New System.Drawing.Size(239, 22)
         Me.DeleteToolStripMenuItem.Text = "Delete"
         '
         'RenameToolStripMenuItem
         '
         Me.RenameToolStripMenuItem.Name = "RenameToolStripMenuItem"
-        Me.RenameToolStripMenuItem.Size = New System.Drawing.Size(157, 22)
+        Me.RenameToolStripMenuItem.Size = New System.Drawing.Size(239, 22)
         Me.RenameToolStripMenuItem.Text = "Rename"
         '
         'CopyLabelToolStripMenuItem
         '
         Me.CopyLabelToolStripMenuItem.Name = "CopyLabelToolStripMenuItem"
-        Me.CopyLabelToolStripMenuItem.Size = New System.Drawing.Size(157, 22)
+        Me.CopyLabelToolStripMenuItem.Size = New System.Drawing.Size(239, 22)
         Me.CopyLabelToolStripMenuItem.Text = "Copy Label Text"
+        '
+        'SaveLabelContentChecksumsToolStripMenuItem
+        '
+        Me.SaveLabelContentChecksumsToolStripMenuItem.Name = "SaveLabelContentChecksumsToolStripMenuItem"
+        Me.SaveLabelContentChecksumsToolStripMenuItem.Size = New System.Drawing.Size(239, 22)
+        Me.SaveLabelContentChecksumsToolStripMenuItem.Text = "Save Label Content Checksums"
         '
         'ImageList1
         '
@@ -143,7 +151,7 @@ Partial Class Form1
         'ListView1
         '
         Me.ListView1.AllowColumnReorder = True
-        Me.ListView1.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader1, Me.ColumnHeader2, Me.ColumnHeader3, Me.ColumnHeader7, Me.ColumnHeader4, Me.ColumnHeader5, Me.ColumnHeader6, Me.ColumnHeader8, Me.ColumnHeader9})
+        Me.ListView1.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader1, Me.ColumnHeader2, Me.ColumnHeader3, Me.ColumnHeader7, Me.ColumnHeader4, Me.ColumnHeader5, Me.ColumnHeader6, Me.ColumnHeader8, Me.ColumnHeader9, Me.ColumnHeader10, Me.ColumnHeader11})
         Me.ListView1.ContextMenuStrip = Me.ContextMenuStrip2
         Me.ListView1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.ListView1.HideSelection = False
@@ -317,11 +325,13 @@ Partial Class Form1
         Me.StatusToolStripLabel.Size = New System.Drawing.Size(43, 19)
         Me.StatusToolStripLabel.Text = "Ready"
         '
-        'SaveLabelContentChecksumsToolStripMenuItem
+        'ColumnHeader10
         '
-        Me.SaveLabelContentChecksumsToolStripMenuItem.Name = "SaveLabelContentChecksumsToolStripMenuItem"
-        Me.SaveLabelContentChecksumsToolStripMenuItem.Size = New System.Drawing.Size(239, 22)
-        Me.SaveLabelContentChecksumsToolStripMenuItem.Text = "Save Label Content Checksums"
+        Me.ColumnHeader10.Text = "Last Checked"
+        '
+        'ColumnHeader11
+        '
+        Me.ColumnHeader11.Text = "Outcome"
         '
         'Form1
         '
@@ -386,4 +396,6 @@ Partial Class Form1
     Friend WithEvents RefreshFileListAfterOperationToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents OnlyShowSearchTreeResultsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents SaveLabelContentChecksumsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ColumnHeader10 As ColumnHeader
+    Friend WithEvents ColumnHeader11 As ColumnHeader
 End Class

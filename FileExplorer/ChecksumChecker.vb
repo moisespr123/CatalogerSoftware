@@ -12,6 +12,7 @@
                                               file.SubItems(2).Text = "MATCH"
                                               file.SubItems(2).BackColor = Color.LimeGreen
                                           End Sub)
+                    Form1.SQL.UpdateLastCheckedFile(file.Tag, Date.Now, 1)
                     GoodCounter += 1
                 Else
                     ListView1.BeginInvoke(Sub()
@@ -19,7 +20,7 @@
                                               file.SubItems(2).Text = "MISMATCH"
                                               file.SubItems(2).BackColor = Color.Red
                                           End Sub)
-
+                    Form1.SQL.UpdateLastCheckedFile(file.Tag, Date.Now, 2)
                 End If
                 ListView1.BeginInvoke(Sub()
                                           file.SubItems(4).Text = hash
@@ -31,6 +32,7 @@
                                           file.SubItems(2).Text = "ERROR"
                                           file.SubItems(2).BackColor = Color.Tomato
                                       End Sub)
+                Form1.SQL.UpdateLastCheckedFile(file.Tag, Date.Now, 2)
             End Try
             Counter += 1
             Label1.BeginInvoke(Sub()
@@ -42,7 +44,7 @@
             If GoodCounter = Counter Then
                 Outcome = 1
             End If
-            Form1.SQL.UpdateLastChecked(CurrentLabel, Date.Now, Outcome)
+            Form1.SQL.UpdateLastCheckedLabel(CurrentLabel, Date.Now, Outcome)
         End If
             Button1.BeginInvoke(Sub() Button1.Enabled = True)
         MsgBox("Done")

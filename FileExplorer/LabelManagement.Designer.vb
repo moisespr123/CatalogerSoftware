@@ -26,6 +26,7 @@ Partial Class LabelManagement
         Me.ColumnHeader1 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader2 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader3 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader4 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Button2 = New System.Windows.Forms.Button()
         Me.Button3 = New System.Windows.Forms.Button()
@@ -33,7 +34,6 @@ Partial Class LabelManagement
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.Button5 = New System.Windows.Forms.Button()
         Me.Button4 = New System.Windows.Forms.Button()
-        Me.ColumnHeader4 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
         Me.SplitContainer1.Panel2.SuspendLayout()
@@ -67,6 +67,11 @@ Partial Class LabelManagement
         '
         Me.ColumnHeader3.Text = "Last Checked"
         Me.ColumnHeader3.Width = 134
+        '
+        'ColumnHeader4
+        '
+        Me.ColumnHeader4.Text = "Last Outcome"
+        Me.ColumnHeader4.Width = 121
         '
         'Button1
         '
@@ -146,11 +151,6 @@ Partial Class LabelManagement
         Me.Button4.TabIndex = 4
         Me.Button4.Text = "Save Label Content Checksums"
         Me.Button4.UseVisualStyleBackColor = True
-        '
-        'ColumnHeader4
-        '
-        Me.ColumnHeader4.Text = "Last Outcome"
-        Me.ColumnHeader4.Width = 121
         '
         'LabelManagement
         '

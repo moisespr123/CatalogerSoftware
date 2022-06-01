@@ -10,7 +10,9 @@ Public Class FileClass
     Public OriginalPath As String = String.Empty
     Public Comment As String = String.Empty
     Public Spindle As String = String.Empty
-    Public Sub New(file_name As String, file_type As String, file_mod_date As Date, file_size As Double, file_vol_label As String, file_checksum As String, file_orig_path As String, file_comment As String, file_spindle As String)
+    Public LastChecked As Date = Date.MinValue
+    Public CheckOutcome As String = "Not Verified"
+    Public Sub New(file_name As String, file_type As String, file_mod_date As Date, file_size As Double, file_vol_label As String, file_checksum As String, file_orig_path As String, file_comment As String, file_spindle As String, last_checked As Date, outcome As Integer)
         Name = file_name
         Type = file_type
         ModifiedDate = file_mod_date
@@ -20,6 +22,12 @@ Public Class FileClass
         OriginalPath = file_orig_path
         Comment = file_comment
         Spindle = file_spindle
+        LastChecked = last_checked
+        If outcome = 1 Then
+            CheckOutcome = "OK"
+        ElseIf outcome = 2 Then
+            CheckOutcome = "Error found"
+        End If
     End Sub
 End Class
 
@@ -37,6 +45,8 @@ Public Class LabelClass
             CheckOutcome = "OK"
         ElseIf outcome = 2 Then
             CheckOutcome = "Errors found"
+        ElseIf outcome = 3 Then
+            CheckOutcome = "Partially Verified"
         End If
     End Sub
 End Class

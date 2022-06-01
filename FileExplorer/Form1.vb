@@ -68,9 +68,18 @@ Public Class Form1
                 End If
             End If
             Dim item As ListViewItem = New ListViewItem(CurrentFiles(file).Name)
-            Dim subItems As ListViewItem.ListViewSubItem() = New ListViewItem.ListViewSubItem() {New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Type), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).ModifiedDate),
-               New ListViewItem.ListViewSubItem(item, String.Format("{0:N2} KB", CurrentFiles(file).FileSize)), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).VolumeLabel), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Checksum),
-               New ListViewItem.ListViewSubItem(item, CurrentFiles(file).OriginalPath), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Comment), New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Spindle)}
+            Dim subItems As ListViewItem.ListViewSubItem() = New ListViewItem.ListViewSubItem() {
+                New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Type),
+                New ListViewItem.ListViewSubItem(item, CurrentFiles(file).ModifiedDate),
+                New ListViewItem.ListViewSubItem(item, String.Format("{0:N2} KB", CurrentFiles(file).FileSize)),
+                New ListViewItem.ListViewSubItem(item, CurrentFiles(file).VolumeLabel),
+                New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Checksum),
+                New ListViewItem.ListViewSubItem(item, CurrentFiles(file).OriginalPath),
+                New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Comment),
+                New ListViewItem.ListViewSubItem(item, CurrentFiles(file).Spindle),
+                New ListViewItem.ListViewSubItem(item, CurrentFiles(file).LastChecked.ToString("G")),
+                New ListViewItem.ListViewSubItem(item, CurrentFiles(file).CheckOutcome)
+            }
             item.SubItems.AddRange(subItems)
             ListView1.Items.Add(item).Tag = file
         Next
