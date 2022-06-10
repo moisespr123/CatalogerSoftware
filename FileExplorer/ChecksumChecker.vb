@@ -53,6 +53,14 @@
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Dim Items As ListViewItem() = New ListViewItem(ListView1.Items.Count - 1) {}
         ListView1.Items.CopyTo(Items, 0)
+        Dim FileExists As Boolean = True
+        For Each file As ListViewItem In Items
+            If Not IO.File.Exists(file.SubItems(0).Text) Then FileExists = False
+        Next
+        If Not FileExists Then
+            MsgBox("The inserted disc does not contain one or more files. Please insert the correct disc and try again")
+            Return
+        End If
         Button1.Enabled = False
         Dim thread As New Threading.Thread(Sub() Verification(Items, CheckBox1.Checked))
         thread.Start()
